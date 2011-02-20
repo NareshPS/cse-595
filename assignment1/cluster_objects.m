@@ -7,7 +7,7 @@ gist = [];
 filenames = {};
 
 % For shoes.
-for r = 1:10%size(shoe_gist_vector, 2)
+for r = 1:size(shoe_gist_vector, 2)
   gist(r,:) = shoe_gist_vector(r).gist;
   filenames{r} = shoe_gist_vector(r).name; 
 end
@@ -20,7 +20,7 @@ for r = 1:size(bag_gist_vector, 2)
 end
 
 % Create Clusters and visualize using montage.
-for numClusters = 2:2:2
+for numClusters = 2:2:8
   H = [];
   opts = statset('Display','final');
   [cidx, ctrs] = kmeans(gist, numClusters, 'Distance','cosine', 'Replicates', 5, 'Options', opts);
