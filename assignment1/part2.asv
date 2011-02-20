@@ -1,0 +1,19 @@
+%% Call buildLexicon to get the list of Lexicons.
+bagVector = buildLexicon('./bags/');
+shoesVector = buildLexicon('/shoes/');
+
+bagDir = './bags/';
+shoesDir = './shoes/';
+
+%% List all .txt files in bags and shoes directory.
+
+bagFiles = dir(fullfile(bagDir, '*.txt');
+shoesFiles = dir(fullfile(shoesDir, '*.txt');
+
+
+for i = 1 : numel(files)
+    fid = fopen(strcat(strcat(path, '/'), files(i).name));
+    toks = split(fid);
+    fclose(fid);
+    lexicon = union(lexicon, toks);
+end
