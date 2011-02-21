@@ -1,6 +1,18 @@
 %% Call buildLexicon to get the list of Lexicons.
-bagLex = buildLexicon('./bags/');
-shoesLex = buildLexicon('./shoes/');
+
+if exist('bag_lexicon.mat', 'file') == 0
+    bagLex = buildLexicon('./bags/');
+    save('bag_lexicon.mat', 'bagLex');
+else
+    load('bag_lexicon.mat')
+end
+
+if exist('shoes_lexicon.mat', 'file') == 0
+    shoesLex = buildLexicon('./shoes/');
+    save('shoes_lexicon.mat', 'shoesLex');
+else
+    load('shoes_lexicon.mat');
+end
 
 bagDir = './bags/';
 shoesDir = './shoes/';
@@ -18,17 +30,16 @@ for idx = 1 : length(bagFiles)
     toks = split(fd);
     fclose(fd);
     
-    file_vector(length(bagLex)) = 0;
+    bag_text_vector(idx).vector(length(bagLex)) = 0;
     for i=1:length(toks)
         indices = strmatch(toks(i), bagLex);
         
         for j = indices
-            file_vector(j) = file_vector(j) + 1;
+            bag_text_vector(idx).vector(j) = bag_text_vector(idx).vector(j) + 1;
         end
     end
    
     bag_text_vector(idx).name = fullfile(bagDir, bagFiles(idx).name);
-    bag_text_vector(idx).vector = file_vector;
 end
 
 %% Compute the frequency of each lexicon for shoes.
@@ -40,17 +51,16 @@ for idx = 1 : length(shoesFiles)
     toks = split(fd);
     fclose(fd);
     
-    file_vector(length(shoesLex)) = 0;
+    shoes_text_vector(idx).vector(length(shoesLex)) = 0;
     for i=1:length(toks)
         indices = strmatch(toks(i), shoesLex);
         
         for j = indices
-            file_vector(j) = file_vector(j) + 1;
+            shoes_text_vector(idx).vector(j) = shoes_text_vector(idx).vector(j) + 1;
         end
     end
    
     shoes_text_vector(idx).name = fullfile(shoesDir, shoesFiles(idx).name);
-    shoes_text_vector(idx).vector = file_vector;
 end
 
 save('bag_text_vector.mat', 'bag_text_vector');
