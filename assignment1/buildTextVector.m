@@ -10,13 +10,15 @@ allFiles = dir(fullfile(filePath, [filePrefix '*' fileSuffix]));
 
 %% Compute the frequency of each lexicon for bags.
 
-text_vector = [];
+text_vector = zeors(length(allFiles));
+
 for idx = 1 : length(allFiles)
     fd = fopen(fullfile(filePath, allFiles(idx).name));
     toks = split(fd);
     fclose(fd);
     
-    text_vector(idx).vector(length(lexiconVector)) = 0;
+    text_vector(idx).vector = zeros(1, length(lexiconVector));
+    
     for i=1:length(toks)
         indices = strmatch(toks(i), lexiconVector);
         
