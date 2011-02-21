@@ -10,7 +10,7 @@ allFiles = dir(fullfile(filePath, [filePrefix '*' fileSuffix]));
 
 %% Compute the frequency of each lexicon for bags.
 
-text_vector = zeors(length(allFiles));
+text_vector = zeros(length(allFiles));
 
 for idx = 1 : length(allFiles)
     fd = fopen(fullfile(filePath, allFiles(idx).name));
