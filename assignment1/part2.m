@@ -24,44 +24,20 @@ shoesFiles = dir(fullfile(shoesDir, '*.txt'));
 
 %% Compute the frequency of each lexicon for bags.
 
-bag_text_vector = [];
-for idx = 1 : length(bagFiles)
-    fd = fopen(fullfile(bagDir, bagFiles(idx).name));
-    toks = split(fd);
-    fclose(fd);
-    
-    bag_text_vector(idx).vector(length(bagLex)) = 0;
-    for i=1:length(toks)
-        indices = strmatch(toks(i), bagLex);
-        
-        for j = indices
-            bag_text_vector(idx).vector(j) = bag_text_vector(idx).vector(j) + 1;
-        end
-    end
-   
-    bag_text_vector(idx).name = fullfile(bagDir, bagFiles(idx).name);
-end
+bag_text_vector = buildTextVector(bagLex, bagDir);
 
 %% Compute the frequency of each lexicon for shoes.
 
-shoes_text_vector = [];
+shoes_text_vector = buildTextVector(shoesLex, shoesDir);
 
-for idx = 1 : length(shoesFiles)
-    fd = fopen(fullfile(shoesDir, shoesFiles(idx).name));
-    toks = split(fd);
-    fclose(fd);
-    
-    shoes_text_vector(idx).vector(length(shoesLex)) = 0;
-    for i=1:length(toks)
-        indices = strmatch(toks(i), shoesLex);
-        
-        for j = indices
-            shoes_text_vector(idx).vector(j) = shoes_text_vector(idx).vector(j) + 1;
-        end
-    end
-   
-    shoes_text_vector(idx).name = fullfile(shoesDir, shoesFiles(idx).name);
-end
+%% Compute Full vector.
 
+fullLex = [bagLex shoesLex]
+bag_text_full_vector = buildTextVector(fullLex, bagDir);
+shoes_text_full_vector = buildTextVector(fullLex, shoesDir);
+
+%% Save all vectors here.
 save('bag_text_vector.mat', 'bag_text_vector');
 save('shoes_text_vector.mat', 'shoes_text_vector');
+save('bag_text_full_vector.mat', 'bag_text_full_vector');
+save('shoes_text_full_vector.mat', 'shoes_text_full_vector');
