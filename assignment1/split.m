@@ -3,7 +3,7 @@ function ftoks = split(text, delim)
 
 % default delimiter
 if nargin == 1
-    delim = ' .;,';
+    delim = ' .;,!:''';
 end
 
 % get delimited strings

@@ -1,4 +1,4 @@
-%% Call buildLexicon to get the list of Lexicons.
+%% Build the lexicon
 
 if exist('bag_lexicon.mat', 'file') == 0
     bagLex = buildLexicon('./bags/');
@@ -14,30 +14,66 @@ else
     load('shoes_lexicon.mat');
 end
 
+if exist('full_lexicon.mat', 'file') == 0
+    fullLex = [bagLex; shoesLex];
+    save('full_lexicon.mat', 'fullLex');
+else
+    load('full_lexicon.mat');
+end
+
 bagDir = './bags/';
 shoesDir = './shoes/';
 
-%% List all .txt files in bags and shoes directory.
+%% Compute the frequency of each lexicon for bags and shoes.
 
-bagFiles = dir(fullfile(bagDir, '*.txt'));
-shoesFiles = dir(fullfile(shoesDir, '*.txt'));
+% The full lexicon is used so that the size of the feature vector for both
+% shoes and bags is the same.
 
-%% Compute the frequency of each lexicon for bags.
+bag_text_vector = buildTextVector(fullLex, bagDir);
+shoes_text_vector = buildTextVector(fullLex, shoesDir);
 
-bag_text_vector = buildTextVector(bagLex, bagDir);
 
-%% Compute the frequency of each lexicon for shoes.
+%% Cluster the shoes.
+shoeGist = [];
+shoeFiles = {};
 
-shoes_text_vector = buildTextVector(shoesLex, shoesDir);
+for r = 1:size(shoes_text_vector, 2)
+  shoeGist(r,:) = shoes_text_vector(r).vector;
+  name = strrep(shoes_text_vector(r).name, 'descr', 'img'); 
+  name = strrep(name, 'txt', 'jpg'); 
+  shoeFiles{r} = name;
+end
 
-%% Compute Full vector.
 
-fullLex = [bagLex shoesLex]
-bag_text_full_vector = buildTextVector(fullLex, bagDir);
-shoes_text_full_vector = buildTextVector(fullLex, shoesDir);
+for numClusters = 2:2:8
+  clusterObjects(numClusters, shoeGist, shoeFiles, './shoe_out');
+end
 
-%% Save all vectors here.
+%% Cluster the bags.
+bagGist = [];
+bagFiles = {};
+for r = 1:size(bag_text_vector, 2)
+  bagGist(r,:) = bag_text_vector(r).vector;
+  name = strrep(bag_text_vector(r).name, 'descr', 'img'); 
+  name = strrep(name, 'txt', 'jpg'); 
+  bagFiles{r} = name;
+end
+
+for numClusters = 2:2:8
+  clusterObjects(numClusters, bagGist, bagFiles, './bag_out');
+end
+
+%% Cluster everything.
+allGist = [shoeGist; bagGist];
+allFiles = {shoeFiles; bagFiles};
+
+for numClusters = 2:2:8
+  clusterObjects(numClusters, allGist, allFiles, './all_out');
+end
+
+
+%% Jesus saves, so do we.
 save('bag_text_vector.mat', 'bag_text_vector');
 save('shoes_text_vector.mat', 'shoes_text_vector');
-save('bag_text_full_vector.mat', 'bag_text_full_vector');
-save('shoes_text_full_vector.mat', 'shoes_text_full_vector');
+save('full_vector.mat', 'full_vector');
+

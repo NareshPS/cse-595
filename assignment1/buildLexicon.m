@@ -15,6 +15,7 @@ for i = 1 : numel(files)
     fid = fopen(strcat(strcat(path, '/'), files(i).name));
     toks = split(fid);
     fclose(fid);
+    toks = cellfun(@(word)porterStemmer(word), toks,'UniformOutput',false)';
     lexicon = union(lexicon, toks);
 end
 
