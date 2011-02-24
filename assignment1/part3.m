@@ -13,7 +13,7 @@ consolidatedShoesVector = [];
 consolidatedShoesFiles = {};
 
 for r = 1:size(shoeGistVector, 2)
-  consolidatedShoesVector(r,:) = [shoeGistVector(r).gist shoes_text_vector(r).vector]';
+  consolidatedShoesVector(r,:) = [shoeGistVector(r).gist shoes_text_vector(r).vector];
   consolidatedShoesFiles{r} = shoeGistVector(r).name; 
 end
 
@@ -21,8 +21,8 @@ consolidatedBagVector = [];
 consolidatedBagFiles = {};
 
 for r = 1:size(bagGistVector, 2)
-  consolidatedBagVector(r,:) = [bagGistVector(r).gist bag_text_vector(r).vector]';
-  consolidatedBagVector{r} = bagGistVector(r).name; 
+  consolidatedBagVector(r,:) = [bagGistVector(r).gist bag_text_vector(r).vector];
+  consolidatedBagFiles{r} = bagGistVector(r).name; 
 end
 
 %% Cluster shoes and bags on consolidated vector.
