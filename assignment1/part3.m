@@ -28,9 +28,14 @@ end
 %% Cluster shoes and bags on consolidated vector.
 
 for numClusters = 2:2:8
-  clusterObjects(numClusters, consolidatedShoesVector, consolidatedShoesFiles, './merged_shoes_out');
+  clusterObjects(numClusters, consolidatedShoesVector, consolidatedShoesFiles, './merged_shoes_out', 'Merged Shoes');
 end
 
 for numClusters = 2:2:8
-  clusterObjects(numClusters, consolidatedBagVector, consolidatedBagVector, './merged_bag_out');
+  clusterObjects(numClusters, consolidatedBagVector, consolidatedBagFiles, './merged_bag_out', 'Merged Bags');
+end
+
+%% Cluster both shoes and bags.
+for numClusters = 2:2:8
+  clusterObjects(numClusters, [consolidatedBagVector; consolidatedShoesVector], [consolidatedBagFiles consolidatedShoesFiles], './merged_bag_out', 'Merged Bags and Shoes');
 end
