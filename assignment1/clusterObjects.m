@@ -16,7 +16,8 @@ for idx = 1:numClusters
   [values, indices] = sort(distances);
   files = {fileNames{cidx==idx}};
   files = files(indices(1:k-1));
-  montage(files(1:10:size(files,2)));
+  montageGrid(files(1:10:size(files,2)));
+  %montage(files(1:10:size(files,2)));
   fname = sprintf('%s/%d_%d.jpg', outputDir, numClusters, idx); 
   print(handle, '-djpeg', fname);
 end

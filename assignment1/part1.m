@@ -22,6 +22,7 @@ for r = 1:size(shoeGistVector, 2)
   shoeFiles{r} = shoeGistVector(r).name; 
 end
 
+
 for numClusters = 2:2:8
   clusterObjects(numClusters, shoeGist, shoeFiles, './gist_shoes_out');
 end
