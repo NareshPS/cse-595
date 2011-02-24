@@ -57,7 +57,7 @@ end
 
 
 for numClusters = 2:2:8
-  clusterObjects(numClusters, shoesVector, shoesFiles, './shoe_out');
+  clusterObjects(numClusters, shoesVector, shoesFiles, './text_shoes_out');
 end
 
 %% Cluster the bags.
@@ -71,7 +71,7 @@ for r = 1:size(bag_text_vector, 2)
 end
 
 for numClusters = 2:2:8
-  clusterObjects(numClusters, bagVector, bagFiles, './bag_out');
+  clusterObjects(numClusters, bagVector, bagFiles, './text_bag_out');
 end
 
 %% Cluster everything.
@@ -79,5 +79,5 @@ full_text_vector = [shoesVector; bagVector];
 allFiles = {shoesFiles; bagFiles};
 
 for numClusters = 2:2:8
-  clusterObjects(numClusters, full_text_vector, allFiles, './all_out');
+  clusterObjects(numClusters, full_text_vector, allFiles, './text_all_out');
 end

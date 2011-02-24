@@ -23,7 +23,7 @@ for r = 1:size(shoeGistVector, 2)
 end
 
 for numClusters = 2:2:8
-  clusterObjects(numClusters, shoeGist, shoeFiles, './shoe_out');
+  clusterObjects(numClusters, shoeGist, shoeFiles, './gist_shoes_out');
 end
 
 % For bags.
@@ -35,7 +35,7 @@ for r = 1:size(bagGistVector, 2)
 end
 
 for numClusters = 2:2:8
-  clusterObjects(numClusters, bagGist, bagFiles, './bag_out');
+  clusterObjects(numClusters, bagGist, bagFiles, './gist_bag_out');
 end
 
 % Create a consolidate gist and filename vector.
@@ -43,5 +43,5 @@ allGist = [shoeGist; bagGist];
 allFiles = [shoeFiles; bagFiles];
 
 for numClusters = 2:2:8
-  clusterObjects(numClusters, allGist, allFiles, './all_out');
+  clusterObjects(numClusters, allGist, allFiles, './gist_all_out');
 end
