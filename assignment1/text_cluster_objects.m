@@ -39,8 +39,8 @@ for numClusters = 2:2:8
     [values, indices] = sort(distances);
     files = {filenames{cidx==idx}};
     files = files(indices(1:k-1))
-    %montage(files(1:10:size(files,2)));
-    %fname = sprintf('output/%d_%d.jpg', numClusters, idx); 
-    %print(handle, '-djpeg', fname);
+    montage(files(1:10:size(files,2)));
+    fname = sprintf('output/%d_%d.jpg', numClusters, idx); 
+    print(handle, '-djpeg', fname);
   end
 end
