@@ -33,6 +33,9 @@ if exist('merged_bag_out', 'dir') == 0
     mkdir merged_bag_out
 end
 
+if exist('merged_all_out', 'dir') == 0
+    mkdir merged_all_out
+end
 %% Run Part 1
 part1
 
