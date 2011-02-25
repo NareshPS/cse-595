@@ -20,6 +20,24 @@ for idx = 1:numClusters
   montageGrid(files(1:min(16,size(files,2))));
   %montage(files(1:10:size(files,2)));
   fname = sprintf('%s/%d_%d.jpg', outputDir, numClusters, idx); 
+  
+  fid = fopen(sprintf('%s/%d_%d.txt', outputDir, numClusters, idx), 'w');
+  for fidx = 1 : min(5, numel(files))
+    descfile = strrep(strrep(files(fidx), 'jpg', 'txt'), 'img', 'descr');
+    
+    df = fopen(descfile{1});
+    toks = textscan(df, '%s');
+    toks = toks';
+    fclose(df);
+    
+    for ti = 1 : numel(toks{1}')
+        fprintf(fid, '%s ', toks{1}{ti});
+    end
+    
+    fprintf(fid, '\n');
+  end
+  fclose(fid);
+  
   print(handle, '-djpeg', fname);
   close(handle);
 end
