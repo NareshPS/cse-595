@@ -71,7 +71,7 @@ for r = 1:size(bag_text_vector, 2)
 end
 
 for numClusters = 2:2:8
-  clusterObjects(numClusters, bagVector, bagFiles, './text_bag_out', 'Bag Text);
+  clusterObjects(numClusters, bagVector, bagFiles, './text_bag_out', 'Bag Text');
 end
 
 %% Cluster everything.

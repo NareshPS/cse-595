@@ -21,4 +21,5 @@ for idx = 1:numClusters
   %montage(files(1:10:size(files,2)));
   fname = sprintf('%s/%d_%d.jpg', outputDir, numClusters, idx); 
   print(handle, '-djpeg', fname);
+  close(handle);
 end
