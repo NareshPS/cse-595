@@ -14,7 +14,7 @@ text_vector = [];
 
 for idx = 1 : length(allFiles)
     fd = fopen(fullfile(filePath, allFiles(idx).name));
-    toks = split(fd);
+    toks = cleanStopWords(split(fd));
     fclose(fd);
 
     text_vector(idx).vector = zeros(1, length(lexiconVector));
