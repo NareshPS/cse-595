@@ -22,9 +22,9 @@ if size(filenames, 2) > 0
           if (imIndex <= numImages)
               image = imread(char(filenames(imIndex)));
               if size(image, 3) == 3
-                  tempMap = [tempMap rgb2gray(image)];
-              else
                   tempMap = [tempMap image];
+              else
+                  tempMap = [tempMap repmat(image, [1 1 3])];
               end
               imIndex  = imIndex + 1;
           else
