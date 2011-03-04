@@ -26,7 +26,7 @@ for r = 1:size(bagGistVector, 2)
 end
 
 %% Cluster shoes and bags on consolidated vector.
-
+%{
 for numClusters = 2:2:8
   clusterObjects(numClusters, consolidatedShoesVector, consolidatedShoesFiles, './merged_shoes_out', 'Merged Shoes');
 end
@@ -34,6 +34,7 @@ end
 for numClusters = 2:2:8
   clusterObjects(numClusters, consolidatedBagVector, consolidatedBagFiles, './merged_bag_out', 'Merged Bags');
 end
+%}
 
 %% Cluster both shoes and bags.
 for numClusters = 2:2:8

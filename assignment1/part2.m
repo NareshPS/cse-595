@@ -75,9 +75,11 @@ for numClusters = 2:2:8
 end
 
 %% Cluster everything.
+%{
 full_text_vector = [shoesVector; bagVector];
 allFiles = [shoesFiles bagFiles];
 
 for numClusters = 2:2:8
   clusterObjects(numClusters, full_text_vector, allFiles, './text_all_out', 'Text All');
 end
+%}
