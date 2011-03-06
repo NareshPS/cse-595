@@ -25,7 +25,7 @@ end
 trainingLabel = [training.label];
 
 numSets = 5;
-splitSetlabels = [];
+splitSetlabels = zeros(1, size(trainingLabel, 2));
 
 for i = 1:numSets;
     for j = 1:size(trainingLabel, 2);
@@ -35,5 +35,7 @@ for i = 1:numSets;
             splitSetLabels(j) = 2;
         end
     end
-    trainAndTestSVM(splitSetLabels, trainHistograms, i);
+    modelArray{i} = trainAndTestSVM(splitSetLabels, trainHistograms, i);
 end
+
+save('model.mat', 'modelArray');

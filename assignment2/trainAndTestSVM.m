@@ -1,8 +1,8 @@
 %% Train and test SVM.
-function trainAndTestSVM(trainLabel, trainHistograms, index)
+function model = trainAndTestSVM(trainLabel, trainHistograms, index)
 %% Split Training set into training and tuning set.
 
-tunePct = 25;
+tunePct = 30;
 dataSize = size(trainLabel, 2);
 trainingSize = cast((dataSize/4), 'uint32');
 
@@ -13,10 +13,9 @@ tuningLabel = [trainLabel((trainingSize + 1):size(trainLabel, 2))]';
 tuningHistogram = trainHistograms((trainingSize + 1):size(trainLabel, 2),:);
 
 % Train SVM classifier.
-model = svmtrain(trainingLabel', trainingHistogram, '-c 10000 -t 2 -g .0001');
+model = svmtrain(trainingLabel', trainingHistogram, '-c .1 -t 2 -g .1');
 
 % Test SVM classifier.
-
 [predictedLabels, accuracy, probEstimates] = ...
     svmpredict(tuningLabel, ...
     tuningHistogram, model);
