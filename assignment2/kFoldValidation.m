@@ -23,13 +23,14 @@ end
 
 %% Split Training set into training and tuning set.
 
-FOLDS = 10;
+FOLDS = 2;
 classLabels = [1 2 3 4 5];
+colors = {'black', 'brown', 'red', 'silver', 'gold'};
 
 for labelIdx = 1:numel(classLabels)
     label = classLabels(labelIdx);
     disp(sprintf('Testing for label %d', label));
-    currClassLabels = double(isMember([training.label], label)');
+    currClassLabels = double(isMember([training.label], label))';
     indices = crossvalind('kfold', currClassLabels, FOLDS);
     
     labelAccuracy = zeros(FOLDS, 1);
@@ -45,8 +46,8 @@ for labelIdx = 1:numel(classLabels)
         foldTestSet = trainHistograms(foldTestIndices, :);
         foldTestClassLabels = currClassLabels(foldTestIndices, :);
         
-        model = svmtrain(foldTrainClassLabels, foldTrainSet, '-c 50 -t 2 -g 1');
-        [predictedLabels, accuracy, probEstimates] = svmpredict(foldTestClassLabels, foldTestSet, model);
+        model = svmtrain(foldTrainClassLabels, foldTrainSet, '-c 50 -t 2 -g 1 -b 1');
+        [predictedLabels, accuracy, probEstimates] = svmpredict(foldTestClassLabels, foldTestSet, model, '-b 1');
         labelAccuracy(fold) = accuracy(1);
     end
     
@@ -54,9 +55,13 @@ for labelIdx = 1:numel(classLabels)
     
     % ideally, above, we should be tuning parameters.
     % Assuming that's done, build model over entire training set.
-    model = svmtrain(currClassLabels, trainHistograms, '-c 50 -t 2 -g 1');
 
-    % test the training set, and dump predicted labels for eac image into
-    % file
+    model = svmtrain(currClassLabels, trainHistograms, '-c 50 -t 2 -g 1 -b 1');
+
+    % test the test set, and dump predicted labels for each image into
+    % file. this is for the current class label.
+    
+    testModel(model, label, test, testHistograms);    
 end
+
 
