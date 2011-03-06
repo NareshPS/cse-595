@@ -32,6 +32,7 @@ function [ colorLabels ] = getColorLabels(description)
 % Function returns colorLabels found in text.
 
 colors = {'black', 'brown', 'red', 'silver', 'gold'};
+colorIndices = [1, 2, 3, 4, 5];
 
 numColors = numel(colors);
 found = zeros(1, numColors);
@@ -41,4 +42,4 @@ for colorIdx = 1 : numColors
     found(1, colorIdx) = any(foundPos); % returns 1 for non-empty foundPos
 end
 
-colorLabels = colors(found == 1);
+colorLabels = colorIndices(found == 1);

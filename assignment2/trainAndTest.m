@@ -22,5 +22,11 @@ else
 end
 
 % Train SVM classifier.
+model = svmtrain([training.label]', trainHistograms, '-c 10.01 -t 2 -g 1');
+
 
 % Test SVM classifier.
+numTestHistograms = size(testHistograms, 1);
+[predictedLabels, accuracy, probEstimates] = ...
+    svmpredict(zeros(numTestHistograms, 1), ...
+    testHistograms, model);
