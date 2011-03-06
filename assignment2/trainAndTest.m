@@ -21,12 +21,19 @@ else
     load('testHist.mat');
 end
 
-% Train SVM classifier.
-model = svmtrain([training.label]', trainHistograms, '-c 10.01 -t 2 -g 1');
+%% Split Training set into training and tuning set.
 
+trainingLabel = [training(1:430).label]';
+trainingHistogram = trainHistograms(1:430,:);
+
+tuningLabel = [training(431:577).label]';
+tuningHistogram = trainHistograms(431:577,:);
+
+% Train SVM classifier.
+model = svmtrain(trainingLabel, trainingHistogram, '-c 50 -t 2 -g 1');
 
 % Test SVM classifier.
 numTestHistograms = size(testHistograms, 1);
 [predictedLabels, accuracy, probEstimates] = ...
-    svmpredict(zeros(numTestHistograms, 1), ...
-    testHistograms, model);
+    svmpredict(tuningLabel, ...
+    tuningHistogram, model);
