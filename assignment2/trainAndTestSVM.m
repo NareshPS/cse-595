@@ -1,5 +1,5 @@
 %% Train and test SVM.
-function trainAndTestSVM(trainLabel, trainHistograms)
+function trainAndTestSVM(trainLabel, trainHistograms, index)
 %% Split Training set into training and tuning set.
 
 tunePct = 25;

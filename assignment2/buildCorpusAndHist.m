@@ -23,23 +23,17 @@ end
 
 % Sort training Label
 trainingLabel = [training.label];
-[values, indices] = sort(trainingLabel);
 
-numSets =5;
-startIndex = 1;
-fullIdx = 1:size(trainingLabel, 2);
-model = {};
+numSets = 5;
+splitSetlabels = [];
 
-for i = 1:numSets
-    elemCount = size(values(values == i),2);
-    positiveHistogram = trainHistograms(indices(startIndex: startIndex + elemCount - 1),:);
-    restCount = size(values(values ~= i),2);
-    effIdx = setdiff(fullIdx, indices(startIndex: startIndex + elemCount - 1));
-    negativeHistogram = trainHistograms(effIdx,:);
-    fullHistogram = [positiveHistogram; negativeHistogram];
-    positiveLabel = repmat(1, 1, size(positiveHistogram, 1));
-    negativeLabel = repmat(2, 1, size(negativeHistogram, 1));
-    fullLabel = [positiveLabel negativeLabel];
-    trainAndTestSVM(fullLabel, fullHistogram);
-    startIndex = startIndex + elemCount;
+for i = 1:numSets;
+    for j = 1:size(trainingLabel, 2);
+        if trainingLabel(j) == i;
+            splitSetLabels(j) = 1;
+        else
+            splitSetLabels(j) = 2;
+        end
+    end
+    trainAndTestSVM(splitSetLabels, trainHistograms, i);
 end
