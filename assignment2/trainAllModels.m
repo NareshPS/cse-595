@@ -35,7 +35,7 @@ for i = 1:numSets;
             splitSetLabels(j) = 2;
         end
     end
-    modelArray{i} = trainAndTestSVM(splitSetLabels, trainHistograms, i);
+    modelArray{i} = trainModel(splitSetLabels, trainHistograms, i);
 end
 
 save('model.mat', 'modelArray');
