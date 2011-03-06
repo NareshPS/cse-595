@@ -32,7 +32,7 @@ for labelIdx = 1:numel(classLabels)
     currClassLabels = double(isMember([training.label], label)');
     indices = crossvalind('kfold', currClassLabels, FOLDS);
     
-    labelAccuracy = zeros(FOLDS);
+    labelAccuracy = zeros(FOLDS, 1);
     
     for fold = 1:FOLDS
         disp(sprintf('FOLD %d', fold));
@@ -50,7 +50,7 @@ for labelIdx = 1:numel(classLabels)
         labelAccuracy(fold) = accuracy(1);
     end
     
-    disp(sprintf('Finished testing for label %d, accuracy %d.', label, mean(labelAccuracy)));
+    disp(sprintf('Finished testing for label %d. Accuracy %f.', label, mean(labelAccuracy)));
     
     % ideally, above, we should be tuning parameters.
     % Assuming that's done, build model over entire training set.
