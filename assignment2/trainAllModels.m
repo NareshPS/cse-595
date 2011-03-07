@@ -40,10 +40,12 @@ if exist('model.mat', 'file') == 0
         end
         modelArray{i} = trainModel(splitSetLabels, trainHistograms, i);
     end
-    save('model.mat', 'modelArray');
+    %save('model.mat', 'modelArray');
 else
     load('model.mat')
 end
+
+
 %% Classify testing images.
 
 if exist('allProbabilities.mat') == 0
@@ -54,7 +56,24 @@ if exist('allProbabilities.mat') == 0
     end
 
     allProbabilities =[probEstimates{1}(:,1) probEstimates{2}(:,1) probEstimates{2}(:,1) probEstimates{4}(:,1) probEstimates{5}(:,1)];
-    save('allProbabilities.mat', 'allProbabilities');
+    %save('allProbabilities.mat', 'allProbabilities');
 else
     load('allProbabilities.mat');
 end
+
+%% Consolidate for display.
+attributeClass = {};
+
+for i = 1:5;
+    classCount{i} = 0;
+end
+
+attributeClass = {};
+
+for i = 1:size(allProbabilities, 1);
+    [prob index] = max(allProbabilities(i,:));
+    classCount{index} = classCount{index} + 1;
+    attributeClass{index}{classCount{index}} = {test(i) prob};
+end
+
+attributeClass
