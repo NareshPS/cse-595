@@ -1,5 +1,6 @@
 function [dummy] = testModel(model, colorLabel, trueLabels, filenames, histograms)
 
+% constant, move elsewhere?
 colors = {'black', 'brown', 'red', 'silver', 'gold'};
 
 [predictedLabels, accuracy, probEstimates] = ...
@@ -9,6 +10,7 @@ colors = {'black', 'brown', 'red', 'silver', 'gold'};
 
 numResults = numel(sortedProbEstimates); 
 
+% how many of our class did we find
 disp(sprintf('got %d favorable labels', sum(predictedLabels)));
 
 fid = fopen(sprintf('%s_prediction.html', colors{colorLabel}), 'w');
@@ -16,6 +18,7 @@ fid = fopen(sprintf('%s_prediction.html', colors{colorLabel}), 'w');
 for rIdx = 1:numResults;
     actualIdx = sortedIdx(rIdx);
 
+    % let us not bother with that which is not in our class
     if predictedLabels(actualIdx) ~= 1
         continue;
     end

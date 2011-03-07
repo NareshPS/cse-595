@@ -27,13 +27,20 @@ FOLDS = 3;
 classLabels = [1 2 3 4 5];
 colors = {'black', 'brown', 'red', 'silver', 'gold'};
 
+% we are building a classifier per-label
+
 for labelIdx = 1:numel(classLabels)
     label = classLabels(labelIdx);
     disp(sprintf('Testing for label %d', label));
     currClassLabels = double(isMember([training.label], label))';
+    
+    % we could also manually split here, based on the 30/70 suggested in
+    % the assignment.
     indices = crossvalind('kfold', currClassLabels, FOLDS);
     
     labelAccuracy = zeros(FOLDS, 1);
+
+    % loop here, to tune parameters for accuracy?
     
     for fold = 1:FOLDS
         disp(sprintf('FOLD %d', fold));
