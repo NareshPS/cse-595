@@ -55,7 +55,7 @@ if exist('allProbabilities.mat') == 0
         [predictedLabels, accuracy, probEstimates{i}] = svmpredict(randomLabels', testHistograms, modelArray{i}, '-b 1');
     end
 
-    allProbabilities =[probEstimates{1}(:,1) probEstimates{2}(:,1) probEstimates{3}(:,1) probEstimates{4}(:,1) probEstimates{5}(:,1)]
+    allProbabilities =[probEstimates{1}(:,1) probEstimates{2}(:,1) probEstimates{3}(:,1) probEstimates{4}(:,1) probEstimates{5}(:,1)];
     save('allProbabilities.mat', 'allProbabilities');
 else
     load('allProbabilities.mat');
