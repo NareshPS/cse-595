@@ -38,9 +38,9 @@ if exist('model.mat', 'file') == 0
                 splitSetLabels(j) = 2;
             end
         end
-        modelArray{i} = trainModel(splitSetLabels, trainHistograms, i);
+        modelArray{i} = trainModel(splitSetLabels, trainHistograms);
     end
-    %save('model.mat', 'modelArray');
+    save('model.mat', 'modelArray');
 else
     load('model.mat')
 end
@@ -55,25 +55,20 @@ if exist('allProbabilities.mat') == 0
         [predictedLabels, accuracy, probEstimates{i}] = svmpredict(randomLabels', testHistograms, modelArray{i}, '-b 1');
     end
 
-    allProbabilities =[probEstimates{1}(:,1) probEstimates{2}(:,1) probEstimates{2}(:,1) probEstimates{4}(:,1) probEstimates{5}(:,1)];
-    %save('allProbabilities.mat', 'allProbabilities');
+    allProbabilities =[probEstimates{1}(:,1) probEstimates{2}(:,1) probEstimates{3}(:,1) probEstimates{4}(:,1) probEstimates{5}(:,1)]
+    save('allProbabilities.mat', 'allProbabilities');
 else
     load('allProbabilities.mat');
 end
 
 %% Consolidate for display.
 attributeClass = {};
+maxImages = 200;
+numSets = 5;
 
-for i = 1:5;
-    classCount{i} = 0;
+for i = 1:numSets;
+    classProb = allProbabilities(:,i);
+    attributeClass{i} = classProb;
+    [prob, indices]=sort(attributeClass{i});
+    generateHTML(test(indices(1:maxImages)), i);
 end
-
-attributeClass = {};
-
-for i = 1:size(allProbabilities, 1);
-    [prob index] = max(allProbabilities(i,:));
-    classCount{index} = classCount{index} + 1;
-    attributeClass{index}{classCount{index}} = {test(i) prob};
-end
-
-attributeClass
