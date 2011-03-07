@@ -23,7 +23,7 @@ end
 
 %% Split Training set into training and tuning set.
 
-FOLDS = 2;
+FOLDS = 3;
 classLabels = [1 2 3 4 5];
 colors = {'black', 'brown', 'red', 'silver', 'gold'};
 
@@ -61,7 +61,12 @@ for labelIdx = 1:numel(classLabels)
     % test the test set, and dump predicted labels for each image into
     % file. this is for the current class label.
     
-    testModel(model, label, test, testHistograms);    
+    testModel(model, label, zeros(size(testHistograms, 1), 1) - 1, test, testHistograms);    
+    
+    % Uncomment the line below to check evaluation on the training set
+    % itself.
+    
+    % testModel(model, label, currClassLabels, {training.filename}, trainHistograms);    
 end
 
 
