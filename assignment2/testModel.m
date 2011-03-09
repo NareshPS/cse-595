@@ -28,7 +28,7 @@ for rIdx = 1:numResults;
     disp(sprintf('predicted %s : %s with probability %d.', ...
         filenames{actualIdx}, predictedLabel, probEstimates(actualIdx)));
 
-     fprintf(fid, '<p><div></div><div><img src="%s" /></div></p>', filenames{actualIdx});
+     fprintf(fid, '<p><div><h1>%f</h1></div><div><img src="%s" /></div></p>', probEstimates(actualIdx), filenames{actualIdx});
 end
 
 fclose(fid);

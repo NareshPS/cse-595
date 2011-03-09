@@ -1,6 +1,6 @@
 function [bestParams] = getBestParams(training, trainHistograms)
 
-FOLDS = 3;
+FOLDS = 5;
 classLabels = [1 2 3 4 5];
 
 % we are building a classifier per-label
@@ -23,8 +23,8 @@ for labelIdx = 1:numel(classLabels)
     bestC = 0;
     bestG = 0;
     
-    for c = 10:10:100
-        for g = 1:1:10
+    for c = 10:10:400
+        for g = 1:1:40
             for fold = 1:FOLDS
                 disp(sprintf('trying c=%d, g=%d', c, g));
                 svmOpt = sprintf('-c %d -t 2 -g %d -b 1', c, g); 
