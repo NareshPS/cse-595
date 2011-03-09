@@ -31,8 +31,9 @@ end
 function [ colorLabels ] = getColorLabels(description)
 % Function returns colorLabels found in text.
 
-colors = {'clutch black', 'brown', ' red ', 'clutch silver ', 'clutch gold'};
-colorIndices = [1, 2, 3, 4, 5];
+colors = {'clutch black', 'clutch brown', 'clutch red', 'clutch silver ', 'clutch gold',...
+    'hobo black', 'hobo brown', 'hobo red', 'hobo silver ', 'hobo gold'};
+colorIndices = [1, 2, 3, 4, 5, 1, 2, 3, 4, 5];
 
 numColors = numel(colors);
 found = zeros(1, numColors);
