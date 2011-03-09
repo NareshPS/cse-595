@@ -21,49 +21,25 @@ else
     load('testHist.mat');
 end
 
-%% Split Training set into training and tuning set.
+if exist('bestParams.mat', 'file') == 0
+    bestParams = getBestParams(training, trainHistograms);
+    save('bestParams.mat', 'bestParams');
+else
+    load('bestParams.mat');
+end
 
-FOLDS = 3;
 classLabels = [1 2 3 4 5];
-colors = {'black', 'brown', 'red', 'silver', 'gold'};
 
-% we are building a classifier per-label
+%% Split Training set into training and tuning set.
+for labelIdx = 1:numel(classLabels)    
 
-for labelIdx = 1:numel(classLabels)
     label = classLabels(labelIdx);
-    disp(sprintf('Testing for label %d', label));
-    currClassLabels = double(isMember([training.label], label))';
+    disp(sprintf('Now, really testing for label %d', label));
+    currClassLabels = double(ismember([training.label], label))';    % ideally, above, we should be tuning parameters.
     
-    % we could also manually split here, based on the 30/70 suggested in
-    % the assignment.
-    indices = crossvalind('kfold', currClassLabels, FOLDS);
-    
-    labelAccuracy = zeros(FOLDS, 1);
-
-    % loop here, to tune parameters for accuracy?
-    
-    for fold = 1:FOLDS
-        disp(sprintf('FOLD %d', fold));
-        foldTestIndices = (indices == fold);
-        foldTrainIndices = ~foldTestIndices;
-        
-        foldTrainSet = trainHistograms(foldTrainIndices, :);
-        foldTrainClassLabels = currClassLabels(foldTrainIndices, :);
-        
-        foldTestSet = trainHistograms(foldTestIndices, :);
-        foldTestClassLabels = currClassLabels(foldTestIndices, :);
-        
-        model = svmtrain(foldTrainClassLabels, foldTrainSet, '-c 50 -t 2 -g 1 -b 1');
-        [predictedLabels, accuracy, probEstimates] = svmpredict(foldTestClassLabels, foldTestSet, model, '-b 1');
-        labelAccuracy(fold) = accuracy(1);
-    end
-    
-    disp(sprintf('Finished testing for label %d. Accuracy %f.', label, mean(labelAccuracy)));
-    
-    % ideally, above, we should be tuning parameters.
     % Assuming that's done, build model over entire training set.
-
-    model = svmtrain(currClassLabels, trainHistograms, '-c 50 -t 2 -g 1 -b 1');
+    svmOpt = sprintf('-c %d -t 2 -g %d -b 1', bestParams(labelIdx, 1), bestParams(labelIdx, 2)); 
+    model = svmtrain(currClassLabels, trainHistograms, svmOpt);
 
     % test the test set, and dump predicted labels for each image into
     % file. this is for the current class label.
