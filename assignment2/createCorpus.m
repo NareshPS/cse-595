@@ -31,15 +31,35 @@ end
 function [ colorLabels ] = getColorLabels(description)
 % Function returns colorLabels found in text.
 
-colors = {'black', 'brown', 'red', 'silver', 'gold'};
+colors = {'clutch black', 'brown', ' red ', 'clutch silver ', 'clutch gold'};
 colorIndices = [1, 2, 3, 4, 5];
 
 numColors = numel(colors);
 found = zeros(1, numColors);
-
-for colorIdx = 1 : numColors
-    foundPos = strfind(lower(description), colors{colorIdx});
-    found(1, colorIdx) = any(foundPos); % returns 1 for non-empty foundPos
+if ~any(misleadingColorsPresent(description))
+    for colorIdx = 1 : numColors
+        foundPos = strfind(lower(description), colors{colorIdx});
+        found(1, colorIdx) = any(foundPos); % returns 1 for non-empty foundPos
+    end
 end
 
 colorLabels = colorIndices(found == 1);
+
+function isPresent = misleadingColorsPresent(description)
+
+isPresent = 0;
+if any(strfind(lower(description), 'available'))
+    isPresent = 1;
+end
+
+if ~isPresent && any(strfind(lower(description), 'brown sugar'))
+    isPresent = 1;
+end
+
+if ~isPresent && any(strfind(lower(description), 'red hot'))
+    isPresent = 1;
+end
+
+if ~isPresent && any(strfind(lower(description), 'ecko red'))
+    isPresent = 1;
+end

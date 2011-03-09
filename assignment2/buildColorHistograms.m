@@ -34,3 +34,5 @@ for i = 1 : sizeX
         histogram(1, histIdx) = histogram(1, histIdx) + 1;
     end
 end
+
+histogram(1,:) = histogram(1,:)/sum(histogram(1,:));
