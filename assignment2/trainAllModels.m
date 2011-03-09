@@ -28,7 +28,7 @@ if exist('model.mat', 'file') == 0
     trainingLabel = [training.label];
 
     numSets = 5;
-    splitSetlabels = zeros(1, size(trainingLabel, 2));
+    splitSetLabels = zeros(1, size(trainingLabel, 2));
 
     for i = 1:numSets;
         for j = 1:size(trainingLabel, 2);
@@ -51,7 +51,7 @@ end
 if exist('allProbabilities.mat') == 0
     probEstimates = {};
     for i = 1:size(modelArray,2);
-        randomLabels = randsrc(1, size(testHistograms, 1), [1 2]);
+        randomLabels = ones(1, size(testHistograms, 1));
         [predictedLabels, accuracy, probEstimates{i}] = svmpredict(randomLabels', testHistograms, modelArray{i}, '-b 1');
     end
 
@@ -69,6 +69,6 @@ numSets = 5;
 for i = 1:numSets;
     classProb = allProbabilities(:,i);
     attributeClass{i} = classProb;
-    [prob, indices]=sort(attributeClass{i});
+    [prob, indices]=sort(attributeClass{i}, 1, 'descend');
     generateHTML(test(indices(1:maxImages)), i);
 end

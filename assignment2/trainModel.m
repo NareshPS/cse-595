@@ -1,6 +1,9 @@
 %% Train and test SVM.
-function model = trainModel(trainLabel, trainHistograms)
+function model = trainModel(inpTrainLabel, inpTrainHistograms)
 %% Split Training set into training and tuning set.
+
+[trainLabel, indices] = sort(inpTrainLabel, 2);
+trainHistograms(:,:) = inpTrainHistograms(indices,:);
 
 tunePct = 30;
 dataSize = size(trainLabel, 2);

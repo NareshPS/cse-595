@@ -31,36 +31,13 @@ end
 function [ colorLabels ] = getColorLabels(description)
 % Function returns colorLabels found in text.
 
-colors = {'clutch black', 'clutch brown', 'clutch red', 'clutch silver ', 'clutch gold',...
-    'hobo black', 'hobo brown', 'hobo red', 'hobo silver ', 'hobo gold'};
-colorIndices = [1, 2, 3, 4, 5, 1, 2, 3, 4, 5];
+colors = {'black', 'brown', 'red', 'silver', 'gold'};
+colorIndices = [1, 2, 3, 4, 5];
 
 numColors = numel(colors);
 found = zeros(1, numColors);
-if ~any(misleadingColorsPresent(description))
-    for colorIdx = 1 : numColors
-        foundPos = strfind(lower(description), colors{colorIdx});
-        found(1, colorIdx) = any(foundPos); % returns 1 for non-empty foundPos
-    end
+for colorIdx = 1 : numColors
+    found(1, colorIdx) = any(regexpi(description, ['^[^\.]+ ' colors{colorIdx} ' [^\.]*'])); 
 end
 
 colorLabels = colorIndices(found == 1);
-
-function isPresent = misleadingColorsPresent(description)
-
-isPresent = 0;
-if any(strfind(lower(description), 'available'))
-    isPresent = 1;
-end
-
-if ~isPresent && any(strfind(lower(description), 'brown sugar'))
-    isPresent = 1;
-end
-
-if ~isPresent && any(strfind(lower(description), 'red hot'))
-    isPresent = 1;
-end
-
-if ~isPresent && any(strfind(lower(description), 'ecko red'))
-    isPresent = 1;
-end
