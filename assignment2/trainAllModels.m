@@ -70,5 +70,5 @@ for i = 1:numSets;
     classProb = allProbabilities(:,i);
     attributeClass{i} = classProb;
     [prob, indices]=sort(attributeClass{i}, 1, 'descend');
-    generateHTML(test(indices(1:maxImages)), i);
+    generateHTML(test(indices(1:maxImages)), 'bags', i);
 end

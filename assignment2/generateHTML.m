@@ -1,10 +1,10 @@
 %% This file generates HTML to display images.
-function generateHTML(imageList, index)
+function generateHTML(imageList, filePrefix, index)
 
 htmlSuffix = '.html';
 imageFileIdx = {'black', 'brown', 'red', 'silver', 'gold'};
 
-fid = fopen([imageFileIdx{index} htmlSuffix], 'w');
+fid = fopen([filePrefix imageFileIdx{index} htmlSuffix], 'w');
 %% Write HTML Prologue
 fprintf(fid, '%s\n', ['<HTML><HEAD><TITLE>' imageFileIdx{index} '</TITLE></HEAD><BODY>']);
 
