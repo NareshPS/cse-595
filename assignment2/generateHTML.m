@@ -9,7 +9,7 @@ fid = fopen([filePrefix imageFileIdx{index} htmlSuffix], 'w');
 fprintf(fid, '%s\n', ['<HTML><HEAD><TITLE>' filePrefix ' ' imageFileIdx{index} '</TITLE></HEAD><BODY>']);
 
 for i = 1:size(imageList,2);
-    fprintf(fid, '%s\n',['<img src="' char(imageList(1,i)) '" />']);
+    fprintf(fid, '%s\n',['<font size="20">' int2str(i) '</font><img src="' char(imageList(1,i)) '" />' ]);
 end
 
 %% Write HTML Epilogue
