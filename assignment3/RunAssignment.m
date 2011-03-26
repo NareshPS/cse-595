@@ -32,7 +32,7 @@ if exist('siftVector.mat', 'file') == 0
     imageNameIdx = 1;
 
     for catIdx = 1 : numCats
-        catTrainingSet = training{catIdx}';
+        catTrainingSet = [training{catIdx}'; testing{catIdx}'];
         [siftVector, vectorImageMap, imageNameIdx] = calculateSift(catTrainingSet, imageNameIdx);
         allSifts = [allSifts; siftVector];
         allVectorMaps = [allVectorMaps; vectorImageMap];
