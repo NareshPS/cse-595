@@ -57,3 +57,24 @@ if exist('siftFeatureVector.mat', 'file') == 0
 else
     load('siftFeatureVector.mat');
 end
+
+%% Create lexicon
+
+if exist('textLexicon.mat', 'file') == 0
+    lexicon = {};
+    for idx = 1:numel(categories)
+        category = categories{idx};
+        listing = dir(['./bags/bags_' category '/descr_bags*.txt']);
+        listing = {listing.name};
+        listing = cellfun(@(fileName) fullfile(['./bags/bags_' category], fileName), listing, 'UniformOutput', false);
+        categoryLexicon = getFeatureWords(listing);
+        disp(sprintf('Found %d unique words for %s.', numel(categoryLexicon), category));
+        lexicon = union(lexicon, categoryLexicon);
+    end
+    
+    disp(sprintf('Found %d unique words in all. Saving.', numel(lexicon)));
+    
+    save('textLexicon.mat', 'lexicon');
+else
+    load('textLexicon.mat');
+end
