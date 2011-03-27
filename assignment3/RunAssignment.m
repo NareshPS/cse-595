@@ -64,17 +64,49 @@ if exist('textLexicon.mat', 'file') == 0
     lexicon = {};
     for idx = 1:numel(categories)
         category = categories{idx};
+        
+        % extract filenames
         listing = dir(['./bags/bags_' category '/descr_bags*.txt']);
         listing = {listing.name};
+        
+        % convert to file path
         listing = cellfun(@(fileName) fullfile(['./bags/bags_' category], fileName), listing, 'UniformOutput', false);
+
         categoryLexicon = getFeatureWords(listing);
         disp(sprintf('Found %d unique words for %s.', numel(categoryLexicon), category));
         lexicon = union(lexicon, categoryLexicon);
     end
+    
+    % not sure why lexicon isn't a cell-array here. forcing.
+    lexicon = {lexicon{:}};
     
     disp(sprintf('Found %d unique words in all. Saving.', numel(lexicon)));
     
     save('textLexicon.mat', 'lexicon');
 else
     load('textLexicon.mat');
+
+    disp(sprintf('Loaded %d unique words in all.', numel(lexicon)));
+end
+
+
+%% get feature vector for all files
+if exist('textLexiconVectors.mat', 'file') == 0
+    curIdx = 1;
+    textLexiconVectors = zeros(imageNameIdx - 1, numel(lexicon));
+    for idx = 1:numel(training)
+        descr_files = cellfun(@(filepath) strrep(strrep(filepath, 'jpg', 'txt'), 'img', 'descr'), training{idx}, 'UniformOutput', false);
+        textLexiconVectors(curIdx,:) = createTextVector(descr_files, lexicon);
+        curIdx = curIdx + 1;
+    end
+
+    for idx = 1:numel(testing)
+        descr_files = cellfun(@(filepath) strrep(strrep(filepath, 'jpg', 'txt'), 'img', 'descr'), testing{idx}, 'UniformOutput', false);
+        textLexiconVectors(curIdx,:) = createTextVector(descr_files);
+        curIdx = curIdx + 1;        
+    end
+
+    save('textLexiconVectors.mat', 'textLexiconVectors');
+else
+    load('textLexiconVectors.mat');
 end
