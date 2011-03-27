@@ -92,18 +92,16 @@ end
 
 %% get feature vector for all files
 if exist('textLexiconVectors.mat', 'file') == 0
-    curIdx = 1;
-    textLexiconVectors = zeros(imageNameIdx - 1, numel(lexicon));
+    textLexiconVectors = zeros(0, numel(lexicon));
+    
     for idx = 1:numel(training)
         descr_files = cellfun(@(filepath) strrep(strrep(filepath, 'jpg', 'txt'), 'img', 'descr'), training{idx}, 'UniformOutput', false);
-        textLexiconVectors(curIdx,:) = createTextVector(descr_files, lexicon);
-        curIdx = curIdx + 1;
+        textLexiconVectors = [textLexiconVectors; createTextVector(descr_files, lexicon)];
     end
 
     for idx = 1:numel(testing)
         descr_files = cellfun(@(filepath) strrep(strrep(filepath, 'jpg', 'txt'), 'img', 'descr'), testing{idx}, 'UniformOutput', false);
-        textLexiconVectors(curIdx,:) = createTextVector(descr_files);
-        curIdx = curIdx + 1;        
+        textLexiconVectors = [textLexiconVectors; createTextVector(descr_files, lexicon)];
     end
 
     save('textLexiconVectors.mat', 'textLexiconVectors');
