@@ -132,7 +132,16 @@ else
     load('textLexiconVectorsK.mat');
 end
 
+%textLexiconVectors = textLexiconVectors(:,[find(ismember(lexicon, 'clutch')), find(ismember(lexicon, 'hobo')), find(ismember(lexicon, 'shoulder')), find(ismember(lexicon, 'tote'))]);
+
 %% Train the Naive Bayesian.
+for idx = 1 : size(imageFeatureVector, 1)
+    imageFeatureVector(idx,:) = 0.1*imageFeatureVector(idx,:) ./ sum(imageFeatureVector(idx,:),2);
+end
+%for idx = 1 : size(textLexiconVectorsK, 1)
+%    textLexiconVectorsK(idx,:) = 10000 * textLexiconVectorsK(idx,:) ./ sum(textLexiconVectorsK(idx,:),2);
+%end
+
 
 imageIdx = 1;
 fullTrainVector = [];
@@ -141,7 +150,7 @@ currentIdx = 1;
 idxCount  = 0;
 
 for idx = 1:2000
-    fullTrainVector(idx,:) = [textLexiconVectorsK(idx)]; % imageFeatureVector(imageIdx+idxCount,:) 
+    fullTrainVector(idx,:) = [imageFeatureVector(imageIdx+idxCount,:) textLexiconVectorsK(idx,:)]; 
     classIdx(idx,1) = currentIdx;
     idxCount = idxCount + 1;
     if mod(idxCount, 500) == 0
@@ -160,7 +169,7 @@ idxCount = 0;
 currentIdx = 1;
 
 for idx = 1:1996
-    fullTestVector(idx,:) = [textLexiconVectorsK(idx+2000)]; % imageFeatureVector(imageIdx+idxCount,:) 
+    fullTestVector(idx,:) = [imageFeatureVector(imageIdx+idxCount,:) textLexiconVectorsK(idx+2000,:)];
     origClassIdx(idx,1) = currentIdx;
     idxCount = idxCount + 1;
     if mod(idxCount, 499) == 0
@@ -170,4 +179,6 @@ for idx = 1:1996
     end
 end
 
-[predClasses, logProbs] = naiveBayesPredict(fullTrainVector, condProb, uniqueClasses);
+[predClasses, logProbs] = naiveBayesPredict(fullTestVector, condProb, uniqueClasses);
+
+confusionmat(origClassIdx, predClasses')

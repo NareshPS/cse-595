@@ -18,7 +18,7 @@ classProbs = [];
 for classIdx = 1 : size(classes, 1)
     condProbForClass = condProbs(classIdx,:);
     logCondProb = log(condProbForClass);
-    classProbs(classIdx, :) = logCondProb .* (featureVector + 1);
+    classProbs(classIdx, :) = logCondProb .* featureVector;
 end
 
 totalProbs = sum(classProbs, 2);
