@@ -41,6 +41,8 @@ if exist('siftVector.mat', 'file') == 0
 else
     load('siftVector.mat');
 end
+
+
 %% Create visual words by kmeans clustering and create the feature vector
 if exist('siftFeatureVector.mat', 'file') == 0
     k = 9;
@@ -108,3 +110,28 @@ if exist('textLexiconVectors.mat', 'file') == 0
 else
     load('textLexiconVectors.mat');
 end
+
+
+%% get the k most frequently using words
+
+if exist('textLexiconVectorsK.mat', 'file') == 0
+    K = 1000;
+    
+    % get the sum across colummns
+    csums = sum(textLexiconVectors, 1);
+    
+    % sort for most frequently using words
+    [val, idx] = sort(csums, 'descend');
+    
+    % take the top K most frequently occuring words.
+    textLexiconVectorsK = zeros(size(textLexiconVectors, 1), K);
+    
+    for kidx = 1:K
+        textLexiconVectorsK(:,kidx) = textLexiconVectors(:,idx(kidx));
+    end
+    
+    save('textLexiconVectorsK.mat', 'textLexiconVectorsK');
+else
+    load('textLexiconVectorsK.mat');
+end
+
