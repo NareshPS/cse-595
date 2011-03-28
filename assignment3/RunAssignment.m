@@ -109,6 +109,29 @@ else
     load('textLexiconVectors.mat');
 end
 
+%% get the k most frequently using words
+
+if exist('textLexiconVectorsK.mat', 'file') == 0
+    K = 1000;
+    
+    % get the sum across colummns
+    csums = sum(textLexiconVectors, 1);
+    
+    % sort for most frequently using words
+    [val, idx] = sort(csums, 'descend');
+    
+    % take the top K most frequently occuring words.
+    textLexiconVectorsK = zeros(size(textLexiconVectors, 1), K);
+    
+    for kidx = 1:K
+        textLexiconVectorsK(:,kidx) = textLexiconVectors(:,idx(kidx));
+    end
+    
+    save('textLexiconVectorsK.mat', 'textLexiconVectorsK');
+else
+    load('textLexiconVectorsK.mat');
+end
+
 %% Train the Naive Bayesian.
 
 imageIdx = 1;
@@ -118,7 +141,7 @@ currentIdx = 1;
 idxCount  = 0;
 
 for idx = 1:2000
-    fullTrainVector(idx,:) = [textLexiconVectors(idx)]; % imageFeatureVector(imageIdx+idxCount,:) 
+    fullTrainVector(idx,:) = [textLexiconVectorsK(idx)]; % imageFeatureVector(imageIdx+idxCount,:) 
     classIdx(idx,1) = currentIdx;
     idxCount = idxCount + 1;
     if mod(idxCount, 500) == 0
@@ -137,7 +160,7 @@ idxCount = 0;
 currentIdx = 1;
 
 for idx = 1:1996
-    fullTestVector(idx,:) = [textLexiconVectors(idx+2000)]; % imageFeatureVector(imageIdx+idxCount,:) 
+    fullTestVector(idx,:) = [textLexiconVectorsK(idx+2000)]; % imageFeatureVector(imageIdx+idxCount,:) 
     origClassIdx(idx,1) = currentIdx;
     idxCount = idxCount + 1;
     if mod(idxCount, 499) == 0
