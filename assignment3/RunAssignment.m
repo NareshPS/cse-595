@@ -45,15 +45,15 @@ end
 
 %% Create visual words by kmeans clustering and create the feature vector
 if exist('siftFeatureVector.mat', 'file') == 0
-    k = 9;
-    opts = statset('MaxIter', 500, 'Display', 'iter');
-    [clusterIds, centroids] = kmeans(double(allSifts), k, 'Options', opts);
-    imageFeatureVector = zeros(imageNameIdx-1, size(centroids, 1));
+    k = 1000;
+    %opts = statset('MaxIter', 500, 'Display', 'iter');
+    [centroids, clusterIds] = vl_kmeans(double(allSifts)', k);
+    imageFeatureVector = zeros(imageNameIdx-1, size(centroids, 2));
 
-    for siftIdx = 1 : size(clusterIds, 1)
+    for siftIdx = 1 : size(clusterIds, 2)
         imageIdx = allVectorMaps(siftIdx);
-        imageFeatureVector(imageIdx, clusterIds(siftIdx)) = ...
-            imageFeatureVector(imageIdx, clusterIds(siftIdx)) + 1;
+        imageFeatureVector(imageIdx, clusterIds(:,siftIdx)) = ...
+            imageFeatureVector(imageIdx, clusterIds(:,siftIdx)) + 1;
     end
     save('siftFeatureVector.mat', 'imageFeatureVector');
 else
@@ -87,10 +87,8 @@ if exist('textLexicon.mat', 'file') == 0
     save('textLexicon.mat', 'lexicon');
 else
     load('textLexicon.mat');
-
     disp(sprintf('Loaded %d unique words in all.', numel(lexicon)));
 end
-
 
 %% get feature vector for all files
 if exist('textLexiconVectors.mat', 'file') == 0
@@ -111,27 +109,42 @@ else
     load('textLexiconVectors.mat');
 end
 
+%% Train the Naive Bayesian.
 
-%% get the k most frequently using words
+imageIdx = 1;
+fullTrainVector = [];
+classIdx = [];
+currentIdx = 1;
+idxCount  = 0;
 
-if exist('textLexiconVectorsK.mat', 'file') == 0
-    K = 1000;
-    
-    % get the sum across colummns
-    csums = sum(textLexiconVectors, 1);
-    
-    % sort for most frequently using words
-    [val, idx] = sort(csums, 'descend');
-    
-    % take the top K most frequently occuring words.
-    textLexiconVectorsK = zeros(size(textLexiconVectors, 1), K);
-    
-    for kidx = 1:K
-        textLexiconVectorsK(:,kidx) = textLexiconVectors(:,idx(kidx));
+for idx = 1:2000
+    fullTrainVector(idx,:) = [textLexiconVectors(idx)]; % imageFeatureVector(imageIdx+idxCount,:) 
+    classIdx(idx,1) = currentIdx;
+    idxCount = idxCount + 1;
+    if mod(idxCount, 500) == 0
+        imageIdx = imageIdx + 500;
+        currentIdx = currentIdx + 1;
+        idxCount = 0;
     end
-    
-    save('textLexiconVectorsK.mat', 'textLexiconVectorsK');
-else
-    load('textLexiconVectorsK.mat');
 end
 
+[condProb, uniqueClasses] = naiveBayesTrain(fullTrainVector, classIdx);
+
+origClassIdx = [];
+fullTestVector = [];
+imageIdx = 501;
+idxCount = 0;
+currentIdx = 1;
+
+for idx = 1:1996
+    fullTestVector(idx,:) = [textLexiconVectors(idx+2000)]; % imageFeatureVector(imageIdx+idxCount,:) 
+    origClassIdx(idx,1) = currentIdx;
+    idxCount = idxCount + 1;
+    if mod(idxCount, 499) == 0
+        imageIdx = imageIdx + 501;
+        currentIdx = currentIdx + 1;
+        idxCount = 0;
+    end
+end
+
+[predClasses, logProbs] = naiveBayesPredict(fullTrainVector, condProb, uniqueClasses);
