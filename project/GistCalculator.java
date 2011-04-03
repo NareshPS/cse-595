@@ -1,4 +1,5 @@
 import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -8,6 +9,9 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
 public class GistCalculator {
+
+  private static final int IMG_HEIGHT = 480;
+  private static final int IMG_WIDTH = 480;
 
   private class PixelValue {
     public int r;
@@ -43,8 +47,20 @@ public class GistCalculator {
     return pixels;
   }
 
+  private static BufferedImage resizeImage(BufferedImage originalImage, int type){
+    BufferedImage resizedImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, type);
+    Graphics2D g = resizedImage.createGraphics();
+    g.drawImage(originalImage, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
+    g.dispose();
+
+    return resizedImage;
+  }
+
   public float[] getGist(InputStream imageStream) throws IOException {
-    BufferedImage image = ImageIO.read(new MemoryCacheImageInputStream(imageStream));
+    BufferedImage originalImage = ImageIO.read(new MemoryCacheImageInputStream(imageStream));
+    int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+    BufferedImage image = resizeImage(originalImage, type);
+
     List<PixelValue> pixels = getPixels(image);
     int numPixels = pixels.size();
     float[] red = new float[numPixels];
