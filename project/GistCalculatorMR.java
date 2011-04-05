@@ -28,11 +28,26 @@ public class GistCalculatorMR {
 
     public void map(Object key, Text value, Context context) {
       String filename = value.toString().trim();
+      Path filePath = new Path(filename);
+      String basename = filePath.getName();
+      String dirname = filePath.getParent().toString(); 
+      String doneFilename = dirname + "/" + basename + ".done";
+      Path doneFilePath = new Path(doneFilename);
+      FileSystem fs = null;
+      try {
+        fs = FileSystem.get(conf);
+        if (fs.exists(doneFilePath)) {
+          return;
+        }
+      } catch (IOException e) {
+        return;
+      }
+
       FSDataInputStream imageStream;
       float[] gistValues = null;
       StringBuilder sb = new StringBuilder();
       try {
-        imageStream = FileSystem.get(conf).open(new Path(filename));
+        imageStream = fs.open(filePath);
         gistValues = gCalc.getGist(imageStream);
         for (float gistValue : gistValues) {
           sb.append(gistValue + ",");
@@ -43,6 +58,7 @@ public class GistCalculatorMR {
       
       try {
         context.write(new Text(filename), new Text(sb.toString()));
+        fs.createNewFile(doneFilePath);
       } catch (IOException e) {
         e.printStackTrace();
       } catch (InterruptedException e) {
