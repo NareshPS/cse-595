@@ -1,11 +1,13 @@
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.conf.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -15,28 +17,34 @@ public class TagCount {
 	public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
 		private final static IntWritable one = new IntWritable(1);
 		private Text word = new Text();
+		private String inputFile;
 
 		@Override
-		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-			String line = value.toString();
-			if(line.startsWith("tags: ")) {
-				StringTokenizer tokenizer = new StringTokenizer(line);
-				while (tokenizer.hasMoreTokens()) {
-					String token = tokenizer.nextToken();
+			public void setup(Context context) {
+				inputFile = ((FileSplit) context.getInputSplit()).getPath().getName();
+			}
 
-					if(!token.startsWith("tags:")) {
-						word.set(token);
-						context.write(word, one);
+		@Override
+			public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+				String line = value.toString();
+				if(line.startsWith("tags: ")) {
+					StringTokenizer tokenizer = new StringTokenizer(line);
+					while (tokenizer.hasMoreTokens()) {
+						String token = tokenizer.nextToken();
+
+						if(!token.startsWith("tags:")) {
+							word.set(inputFile + "\t" + token);
+							context.write(word, one);
+						}
 					}
 				}
 			}
-		}
 	} 
 
 	public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
 
 		@Override
-		public void reduce(Text key, Iterable<IntWritable> values, Context context) 
+			public void reduce(Text key, Iterable<IntWritable> values, Context context) 
 			throws IOException, InterruptedException {
 				int sum = 0;
 				for (IntWritable value : values) {
