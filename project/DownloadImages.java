@@ -46,9 +46,6 @@ public class DownloadImages {
 
 	public static class Reduce extends Reducer<Text, Text, Text, Text> {
 
-		private static final int MAX_THREADS = 50;
-		private final Semaphore available = new Semaphore(MAX_THREADS, true);
-		private final Semaphore lock = new Semaphore(1, true);
 
 		private Configuration conf;
 		private String outputDir;
@@ -68,88 +65,52 @@ public class DownloadImages {
 				Iterator<Text> it = values.iterator();
 				final String url = it.next().toString();
 
-				available.acquire();
 
 				try {
-					Thread t = new Thread(meta) {
-						public void run() {
+					String suffix = "b";
+					String fileName = meta.replaceAll(" ", "_") + ".jpg";
+					Path p = new Path(outputDir + "/" + suffix  + "_" + fileName);
 
-							try {
-								String suffix = "o";
-								String fileName = meta.replaceAll(" ", "_") + ".jpg";
-								Path p = new Path(outputDir + "/" + suffix  + "_" + fileName);
-
-								if(fs.exists(p)) {
-									available.release();
-									return;
-								}
+					if(fs.exists(p)) {
+						return;
+					}
 
 
 
-								boolean failed = false;
-								URL flickr = new URL(url);
-								InputStream in = flickr.openStream();
-								ByteArrayOutputStream mem = new ByteArrayOutputStream();
+					boolean failed = false;
+					URL flickr = new URL(url.replace("_o.jpg", "_b.jpg"));
+					InputStream in = flickr.openStream();
+					ByteArrayOutputStream mem = new ByteArrayOutputStream();
 
-								int bytesRead;
-								byte [] buffer = new byte[4096*1024];
-								while ((bytesRead = in.read(buffer)) > 0) {
-									mem.write(buffer, 0, bytesRead);
-								}
+					int bytesRead;
+					byte [] buffer = new byte[4096*1024];
+					while ((bytesRead = in.read(buffer)) > 0) {
+						mem.write(buffer, 0, bytesRead);
+					}
 
-								if(mem.size() < 5 * 1024) {
-									suffix = "b";
-									mem = new ByteArrayOutputStream();
-									flickr = new URL(url.replace("_o.jpg", "_b.jpg"));
-									in = flickr.openStream();
-									while ((bytesRead = in.read(buffer)) > 0) {
-										mem.write(buffer, 0, bytesRead);
-									}
-								}
-
-								if(mem.size() < 5 * 1024) {
-									failed = true;
-								}
-
-								if(!failed) {
-									buffer = mem.toByteArray();
-									FSDataOutputStream out = fs.create(p);
-
-									out.write(buffer, 0, buffer.length);
-									out.close();
-								} else {
-									boolean acquired = false;
-
-									try {
-										lock.acquire();
-										acquired = true;
-									} catch(Exception f) {
-									} finally {
-										if(acquired) {
-											lock.release();
-										}
-									} 
-								}
-							}
-							catch(Exception e) {
-								boolean acquired = false;
-								try {
-									lock.acquire();
-									acquired = true;
-								} catch(Exception g) {
-								} finally {
-									if(acquired) {
-										lock.release();
-									}
-								}
-							} finally {
-								available.release();
-							}
+					if(mem.size() < 5 * 1024) {
+						suffix = "b";
+						mem = new ByteArrayOutputStream();
+						flickr = new URL(url);
+						in = flickr.openStream();
+						while ((bytesRead = in.read(buffer)) > 0) {
+							mem.write(buffer, 0, bytesRead);
 						}
-					};
+					}
 
-					t.start();
-				} catch(Exception e) {
+					if(mem.size() < 5 * 1024) {
+						failed = true;
+					}
+
+					if(!failed) {
+						buffer = mem.toByteArray();
+						FSDataOutputStream out = fs.create(p);
+
+						out.write(buffer, 0, buffer.length);
+						out.close();
+					}
+				}
+				catch(Exception e) {
 				} 
 			}
 	}
