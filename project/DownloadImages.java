@@ -69,13 +69,19 @@ public class DownloadImages {
 				try {
 					String suffix = "b";
 					String fileName = meta.replaceAll(" ", "_") + ".jpg";
-					Path p = new Path(outputDir + "/" + suffix  + "_" + fileName);
+					String category = fileName.substring(0, fileName.indexOf("."));
+					String categoryOutputDir = outputDir + "/"  + category;
+					Path categoryPath = new Path(categoryOutputDir);
+
+					if(!fs.exists(categoryPath)) { 
+						fs.mkdirs(categoryPath);
+					}
+
+					Path p = new Path(categoryOutputDir + "/" + suffix  + "_" + fileName);
 
 					if(fs.exists(p)) {
 						return;
 					}
-
-
 
 					boolean failed = false;
 					URL flickr = new URL(url.replace("_o.jpg", "_b.jpg"));
@@ -133,6 +139,7 @@ public class DownloadImages {
 		job.setOutputFormatClass(TextOutputFormat.class);
 
 		FileInputFormat.addInputPath(job, new Path(args[0]));
+		FileOutputFormat.setOutputPath(job, new Path(args[2]));
 
 		job.setNumReduceTasks(36);
 
