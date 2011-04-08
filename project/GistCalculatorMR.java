@@ -31,14 +31,9 @@ public class GistCalculatorMR {
       Path filePath = new Path(filename);
       String basename = filePath.getName();
       String dirname = filePath.getParent().toString(); 
-      String doneFilename = dirname + "/" + basename + ".done";
-      Path doneFilePath = new Path(doneFilename);
       FileSystem fs = null;
       try {
         fs = FileSystem.get(conf);
-        if (fs.exists(doneFilePath)) {
-          return;
-        }
       } catch (IOException e) {
         return;
       }
@@ -52,13 +47,13 @@ public class GistCalculatorMR {
         for (float gistValue : gistValues) {
           sb.append(gistValue + ",");
         }
-      } catch (IOException e) {
+      } catch (Exception e) {
         e.printStackTrace();
+        return;
       }
       
       try {
         context.write(new Text(filename), new Text(sb.toString()));
-        fs.createNewFile(doneFilePath);
       } catch (IOException e) {
         e.printStackTrace();
       } catch (InterruptedException e) {
@@ -95,7 +90,6 @@ public class GistCalculatorMR {
 
     job.setJarByClass(GistCalculatorMR.class);
     job.setMapperClass(GistCalculatorMR.GistCalculatorMapper.class);
-    NLineInputFormat.setNumLinesPerSplit(job, 1);
     job.setNumReduceTasks(0);
 
     job.setMapOutputKeyClass(Text.class);

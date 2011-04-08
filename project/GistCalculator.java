@@ -56,7 +56,7 @@ public class GistCalculator {
     return resizedImage;
   }
 
-  public float[] getGist(InputStream imageStream) throws IOException {
+  public float[] getGist(InputStream imageStream) throws Exception {
     BufferedImage originalImage = ImageIO.read(new MemoryCacheImageInputStream(imageStream));
     int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
     BufferedImage image = resizeImage(originalImage, type);
