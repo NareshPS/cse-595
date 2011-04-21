@@ -18,18 +18,17 @@ import org.apache.hadoop.fs.*;
 public class DistanceCalculatorMR {
   
   public static class Map extends Mapper<LongWritable, Text, Text, Text> {
-    GoogleGists                  gg;
-    Configuration                conf;
-    public IDistanceCalculator[] dcs;
+    GoogleGists                  gg   = null;
+    Configuration                conf = null;
+    public IDistanceCalculator[] dcs  = null;
     
     @Override
     public void setup(Context context) {
       try {
         conf = context.getConfiguration();
-        gg = new GoogleGists(FileSystem.get(conf), new Path(
-            conf.get("googleImages.dir")));
         dcs = new IDistanceCalculator[] { new EuclideanDC(), new CosineDC() };
-        System.out.println(((FileSplit)context.getInputSplit()).getPath().getName());
+        System.out.println(((FileSplit) context.getInputSplit()).getPath()
+            .getName());
       } catch (IOException ioe) {
         System.out.println(ioe.toString());
       }
@@ -38,6 +37,11 @@ public class DistanceCalculatorMR {
     @Override
     public void map(LongWritable key, Text value, Context context)
         throws IOException, InterruptedException {
+      if (null == gg) {
+        gg = new GoogleGists(FileSystem.get(conf), new Path(
+            conf.get("googleImages.dir")));
+      }
+      
       String line = value.toString();
       String data = line.substring(line.indexOf("\t") + 1);
       String image = line.substring(0, line.indexOf("\t"));
@@ -60,8 +64,7 @@ public class DistanceCalculatorMR {
       Set<String> categories = gg.googleGistsByCategory.keySet();
       
       // now we loop through each category, and for every canonical vector in
-      // that category, we
-      // output the ditance.
+      // that category, we output the distance.
       
       for (String category : categories) {
         List<Double[]> canonicalVectors = gg.googleGistsByCategory
