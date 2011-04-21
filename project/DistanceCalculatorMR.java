@@ -24,14 +24,10 @@ public class DistanceCalculatorMR {
     
     @Override
     public void setup(Context context) {
-      try {
-        conf = context.getConfiguration();
-        dcs = new IDistanceCalculator[] { new EuclideanDC(), new CosineDC() };
-        System.out.println(((FileSplit) context.getInputSplit()).getPath()
-            .getName());
-      } catch (IOException ioe) {
-        System.out.println(ioe.toString());
-      }
+      conf = context.getConfiguration();
+      dcs = new IDistanceCalculator[] { new EuclideanDC(), new CosineDC() };
+      System.out.println(((FileSplit) context.getInputSplit()).getPath()
+          .getName());
     }
     
     @Override
