@@ -41,7 +41,10 @@ public class WordnetUtil {
 			for (Synset synset : synsets) {
 				Word[] synWords = synset.getWords();
 				for (Word synWord : synWords) {
-					expansions.add(synWord.getLemma().trim().toLowerCase());
+					String synStr = synWord.getLemma().trim().toLowerCase();
+					if (synStr.compareTo(word) != 0) {
+						expansions.add(synStr);
+					}
 				}
 				if (++i >= SYN_THRESHOLD) {
 					break;
