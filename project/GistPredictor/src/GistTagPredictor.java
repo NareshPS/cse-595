@@ -6,6 +6,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import weka.classifiers.Classifier;
+import weka.classifiers.bayes.NaiveBayesMultinomial;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.SMO;
 import weka.classifiers.lazy.IBk;
@@ -15,6 +16,8 @@ import weka.classifiers.rules.PART;
 import weka.classifiers.trees.DecisionStump;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.J48graft;
+import weka.classifiers.bayes.BayesNet;
+import weka.classifiers.functions.SimpleLinearRegression;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -64,6 +67,10 @@ public class GistTagPredictor {
 		HashMap<String, Classifier> classifierMap = new HashMap<String, Classifier>();
 		classifierMap.put("smo", new SMO());
 		classifierMap.put("bayes", new NaiveBayes());
+		classifierMap.put("bayesnet", new BayesNet());
+		classifierMap.put("bayesmulti", new NaiveBayesMultinomial());
+
+		classifierMap.put("slr", new SimpleLinearRegression());
 		classifierMap.put("logitboost", new LogitBoost());
 		classifierMap.put("adaboost", new AdaBoostM1());
 		classifierMap.put("decisionstump", new DecisionStump());
@@ -90,10 +97,9 @@ public class GistTagPredictor {
 		}
 
 		// Create training and test data.
-		GistFeatureManager trainFeatMgr = new GistFeatureManager(argv[0]);
-		GistFeatureManager testFeatMgr = new GistFeatureManager(argv[1]);
-		Instances trainingSet = trainFeatMgr.GetInstances();
-		Instances testingSet = testFeatMgr.GetInstances();
+		GistFeatureManager featMgr = new GistFeatureManager(argv[0], argv[1]);
+		Instances trainingSet = featMgr.GetTrainInstances();
+		Instances testingSet = featMgr.GetTestInstances();
 
 		// Choose the classifier.
 		Classifier classifier = classifierMap.get(argv[2]);

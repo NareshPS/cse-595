@@ -9,16 +9,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import java.lang.Integer;
+
 import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 
 public class GistFeatureManager {
-	private Instances instances;
-	private Set<String> uniqueTags = new TreeSet<String>();
+	private Instances trainInstances;
+	private Instances testInstances;
+	private Set<String> uniqueTags          = new TreeSet<String>();
+	private static Set<String> featureTags  = new TreeSet<String>();
 
-	private List<Gist> ParseGistFromFile(String fileName) {
+	private List<Gist> ParseGistFromFile(String fileName, Boolean fillFeatureTags) {
 		File file = new File(fileName);
 		FileInputStream fis = null;
 		BufferedInputStream bis = null;
@@ -33,7 +37,15 @@ public class GistFeatureManager {
 			while ((line = dis.readLine()) != null) {
 				Gist gist = Gist.parseGistFromString(line);
 				docs.add(gist);
-				uniqueTags.add(gist.getLabel());
+                if (fillFeatureTags) {
+                    uniqueTags.add(gist.getLabel());
+
+                    //Add tags to uniqueTags.
+                    //These tags are the ones part of feature vector.
+                    for (String tag: gist.getTagValues()) {
+                        featureTags.add(tag);
+                    }
+                }
 			}
 
 			fis.close();
@@ -49,7 +61,7 @@ public class GistFeatureManager {
 	}
 
 	private Instances CreateWekaFeatureSetInstances(List<Gist> docs) {
-		int numFeatures = Gist.getGistLength() + 1;
+		int numFeatures = Gist.getGistLength() + featureTags.size() + 1;
 
 		FastVector wekaAttributes = new FastVector(numFeatures + 1);
 
@@ -66,6 +78,11 @@ public class GistFeatureManager {
 			wekaAttributes.addElement(new Attribute("gist_" + i));
 		}
 
+        // Add tags as features.
+        for (String tag: featureTags) {
+            wekaAttributes.addElement(new Attribute("tag_" + tag));
+        }
+
 		// Weka featureSet
 		Instances featureSet = new Instances("Features", wekaAttributes,
 				docs.size());
@@ -78,21 +95,42 @@ public class GistFeatureManager {
 					doc.getLabel());
 			int idx = 1;
 			List<Double> gistValues = doc.getGistValues();
+            List<String> tagValues  = doc.getTagValues();
 			for (Double gistValue : gistValues) {
 				anInstance.setValue(
 						(Attribute) wekaAttributes.elementAt(idx++), gistValue);
 			}
+            //Add featureTags to weka.
+            for (String tag: featureTags) {
+                if (tagValues.indexOf(tag) != -1) {
+                    System.out.print(tag + "=1,");
+				    anInstance.setValue(
+						    (Attribute) wekaAttributes.elementAt(idx++), new Double(0.9));
+                }
+                else {
+                    System.out.print(tag + "=0,");
+				    anInstance.setMissing(idx++);
+						    //(Attribute) wekaAttributes.elementAt(idx++),new Double(0.1));
+                }
+            }
+            System.out.println("");
 			featureSet.add(anInstance);
 		}
 		return featureSet;
 	}
 
-	public GistFeatureManager(String inputFile) {
-		List<Gist> trainingDocs = ParseGistFromFile(inputFile);
-		instances = CreateWekaFeatureSetInstances(trainingDocs);
+	public GistFeatureManager(String trainFile, String testFile) {
+		List<Gist> trainingDocs = ParseGistFromFile(trainFile, true);
+		List<Gist> testingDocs  = ParseGistFromFile(testFile, false);
+		trainInstances  = CreateWekaFeatureSetInstances(trainingDocs);
+		testInstances   = CreateWekaFeatureSetInstances(testingDocs);
 	}
 
-	public Instances GetInstances() {
-		return instances;
+	public Instances GetTrainInstances() {
+		return trainInstances;
+	}
+    
+    public Instances GetTestInstances() {
+		return testInstances;
 	}
 }
