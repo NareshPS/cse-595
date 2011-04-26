@@ -10,8 +10,8 @@ public class Gist {
 	public static Gist parseGistFromString(String gistString) {
 		Gist gist = new Gist();
 		String[] parts = gistString.split("\t");
-		gist.label = parts[1];
-		String[] gistStrVals = parts[0].split(",");
+		gist.label = parts[0];
+		String[] gistStrVals = parts[1].split(",");
         int tagOffset;
 
         // Copy the GIST values in the gistValues vector.
