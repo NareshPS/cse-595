@@ -10,9 +10,10 @@ public class Gist {
 	public static Gist parseGistFromString(String gistString) {
 		Gist gist = new Gist();
 		String[] parts = gistString.split("\t");
-		gist.label = parts[0];
 		String[] gistStrVals = parts[1].split(",");
         int tagOffset;
+		
+        gist.label = gist.stripColon(parts[0]);
 
         // Copy the GIST values in the gistValues vector.
         // The size of gistValues vector equals getGistLength()
@@ -28,11 +29,20 @@ public class Gist {
         gist.setTagCount(gistStrVals.length-tagOffset);
         
         for (int i = 0; i < gist.getTagCount(); i++) {
-            gist.tagValues.add(gistStrVals [tagOffset+i]);
+            gist.tagValues.add(gist.stripColon(gistStrVals [tagOffset+i]));
         }
         
         return gist;
 	}
+
+    public String stripColon(String str) {
+        if (str != null && str.length() >0 && str.charAt(0) == ':') {
+            return str.substring(1, str.length()).trim();
+        }
+        else {
+            return str;
+        }
+    }
 
     public void setTagCount(int tagCount) {
         this.tagCount   = tagCount;

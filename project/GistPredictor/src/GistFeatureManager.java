@@ -15,6 +15,7 @@ import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.SparseInstance;
 
 public class GistFeatureManager {
 	private Instances trainInstances;
@@ -104,7 +105,7 @@ public class GistFeatureManager {
 			String line = null;
 			while ((line = dis.readLine()) != null) {
 				Gist gist = Gist.parseGistFromString(line);
-                Instance anInstance = new Instance(numFeatures + 1);
+                SparseInstance anInstance = new SparseInstance(numFeatures + 1);
                 anInstance.setValue((Attribute) wekaAttributes.elementAt(0),
                         (isTest?uniqueTags.iterator().next():gist.getLabel()));
                 int idx = 1;

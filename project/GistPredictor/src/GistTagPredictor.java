@@ -21,6 +21,7 @@ import weka.classifiers.functions.SimpleLinearRegression;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.SparseInstance;
 
 public class GistTagPredictor {
 
@@ -113,7 +114,7 @@ public class GistTagPredictor {
 		}
 		
 		for (int i = 0; i < testingSet.numInstances(); ++i) {
-			Instance testInstance = testingSet.instance(i);
+			SparseInstance testInstance = (SparseInstance)testingSet.instance(i);
 			double[] probabilities = classifier.distributionForInstance(testInstance);
 			SortedSet<LabelScore> labelScores = new TreeSet<LabelScore>();
 			for (int j = 0; j < numValues; ++j) {
