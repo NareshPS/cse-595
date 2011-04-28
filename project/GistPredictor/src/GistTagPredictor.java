@@ -66,7 +66,9 @@ public class GistTagPredictor {
 
 		// Create instances of required classifiers.
 		HashMap<String, Classifier> classifierMap = new HashMap<String, Classifier>();
-		classifierMap.put("smo", new SMO());
+        SMO smo = new SMO();
+        smo.setUseRBF(true);
+		classifierMap.put("smo", smo);
 		classifierMap.put("bayes", new NaiveBayes());
 		classifierMap.put("bayesnet", new BayesNet());
 		classifierMap.put("bayesmulti", new NaiveBayesMultinomial());
