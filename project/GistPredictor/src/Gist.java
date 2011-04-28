@@ -5,15 +5,16 @@ public class Gist {
 	private List<Double> gistValues = new ArrayList<Double>();
 	private List<String> tagValues = new ArrayList<String>();
 	private String label;
+    private String fileId;
     private int tagCount;
 
 	public static Gist parseGistFromString(String gistString) {
 		Gist gist = new Gist();
-		String[] parts = gistString.split("\t");
-		String[] gistStrVals = parts[1].split(",");
+		String[] parts          = gistString.split("\t");
+		String[] gistStrVals    = parts[1].split(",");
         int tagOffset;
-		
-        gist.label = gist.stripColon(parts[0]);
+		gist.fileId             = parts[0].substring(0, parts [0].lastIndexOf('|'));
+        gist.label = gist.stripColon(parts [0].substring(parts [0].lastIndexOf('|')+1, parts [0].length()));
 
         // Copy the GIST values in the gistValues vector.
         // The size of gistValues vector equals getGistLength()
@@ -75,4 +76,8 @@ public class Gist {
 	public static int getGistLength() {
 		return 960;
 	}
+
+    public String getFileId() {
+        return fileId; 
+    }
 }

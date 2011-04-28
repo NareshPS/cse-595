@@ -58,9 +58,9 @@ public class GistTagPredictor {
 	
 	@SuppressWarnings("unchecked")
 	public static void main(String[] argv) throws Exception {
-		if (argv.length < 3) {
+		if (argv.length < 5) {
 			System.err
-					.println("Usage: <program> <train-data> <test-data> <classifier-class>");
+					.println("Usage: <program> <train-data> <test-data> <image-id-map-file> <output.html> <classifier-class>");
 			return;
 		}
 
@@ -81,7 +81,7 @@ public class GistTagPredictor {
 		classifierMap.put("rulebased", new PART());
 
 		// Check classifier string.
-		if (!classifierMap.containsKey(argv[2])) {
+		if (!classifierMap.containsKey(argv[4])) {
 			System.err
 					.println("Classifier not present: Use one of the following:");
 			System.err.println("smo,bayes,logitboost,adaboost,decisionstump"
@@ -90,21 +90,24 @@ public class GistTagPredictor {
 
 		// Create the feature skips.
 		HashSet<String> featureSkipSet = new HashSet<String>();
-		if (argv.length == 4) {
-			String[] features = argv[3].split(",");
+		if (argv.length == 6) {
+			String[] features = argv[5].split(",");
 			for (String feature : features) {
 				featureSkipSet.add(feature);
 			}
 		}
 
 		// Create training and test data.
-		GistFeatureManager featMgr = new GistFeatureManager(argv[0], argv[1]);
+		GistFeatureManager featMgr = new GistFeatureManager(argv[0], argv[1], argv[2]);
 		Instances trainingSet = featMgr.GetTrainInstances();
 		Instances testingSet = featMgr.GetTestInstances();
 
 		// Choose the classifier.
-		Classifier classifier = classifierMap.get(argv[2]);
+		Classifier classifier = classifierMap.get(argv[4]);
 		classifier.buildClassifier(trainingSet);
+
+        //Initialize HTMLWriter.
+        HTMLHandler     htmlWriter   = new HTMLHandler(argv [3]); 
 		
 		Attribute classAttribute = trainingSet.attribute("tagClass");
 		int numValues = classAttribute.numValues();
@@ -120,16 +123,21 @@ public class GistTagPredictor {
 			for (int j = 0; j < numValues; ++j) {
 				labelScores.add(new LabelScore(labels.get(j), probabilities[j]));
 			}
+            String  captions    = new String();
 			int j = 0;
 			System.out.println("============");
 			for (LabelScore labelScore : labelScores) {
+                captions += labelScore.getLabel() + "," + labelScore.getScore() + "\t";
 				System.out.println(labelScore.getLabel() + "," + labelScore.getScore());
 				if (j++ > 20) {
 					break;
 				}
 			}
 			System.out.println("============");
+            htmlWriter.addImage(featMgr.getImageMap().getImage(i), captions);
 		}
+
+        htmlWriter.close();
 
 	}
 }

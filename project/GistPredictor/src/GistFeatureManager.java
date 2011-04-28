@@ -23,6 +23,7 @@ public class GistFeatureManager {
 	private Set<String> uniqueTags          = new TreeSet<String>();
 	private static Set<String> featureTags  = new TreeSet<String>();
 
+    private InstanceImageMap    theMap; 
 	private int ParseGistFromFile(String fileName, Boolean fillFeatureTags) {
 		File file               = new File(fileName);
 		FileInputStream fis     = null;
@@ -71,7 +72,7 @@ public class GistFeatureManager {
 
 		int numFeatures = Gist.getGistLength() + featureTags.size() + 1;
 
-		FastVector wekaAttributes = new FastVector(numFeatures + 1);
+		FastVector wekaAttributes = new FastVector(numFeatures);
 
 		// Add the class attribute.
 		FastVector classValues = new FastVector(uniqueTags.size());
@@ -105,27 +106,33 @@ public class GistFeatureManager {
 			String line = null;
 			while ((line = dis.readLine()) != null) {
 				Gist gist = Gist.parseGistFromString(line);
-                SparseInstance anInstance = new SparseInstance(numFeatures + 1);
+                SparseInstance anInstance = new SparseInstance(numFeatures);
                 anInstance.setValue((Attribute) wekaAttributes.elementAt(0),
                         (isTest?uniqueTags.iterator().next():gist.getLabel()));
                 int idx = 1;
                 List<Double> gistValues = gist.getGistValues();
                 List<String> tagValues  = gist.getTagValues();
+                theMap.addImageId(gist.getFileId());
                 for (Double gistValue : gistValues) {
                     anInstance.setValue(
                             (Attribute) wekaAttributes.elementAt(idx++), gistValue);
                 }
+
                 //Add featureTags to weka.
                 for (String tag: featureTags) {
+
                     if (tagValues.indexOf(tag) != -1) {
                         anInstance.setValue(
-                                (Attribute) wekaAttributes.elementAt(idx++), new Double(0.9));
+                                (Attribute) wekaAttributes.elementAt(idx++), new Double(1.0));
                     }
                     else {
-                        anInstance.setMissing(idx++);
+                        anInstance.setValue(
+                                (Attribute) wekaAttributes.elementAt(idx++), new Double(0.0));
+                        //anInstance.setMissing(idx++);
                                 //(Attribute) wekaAttributes.elementAt(idx++),new Double(0.1));
                     }
                 }
+
                 featureSet.add(anInstance);
             }
 
@@ -142,12 +149,20 @@ public class GistFeatureManager {
 		return featureSet;
 	}
 
-	public GistFeatureManager(String trainFile, String testFile) {
+	public GistFeatureManager(String trainFile, String testFile, String imageIdFile) {
+        theMap              = InstanceImageMap.constructMap(imageIdFile);
+        if (theMap == null) {
+            System.out.println("Failed to parse imageIdFile");
+        }
 		int numTrainDocs    = ParseGistFromFile(trainFile, true);
 		int numTestDocs     = ParseGistFromFile(testFile, false);
 		trainInstances      = CreateWekaFeatureSetInstances(trainFile, numTrainDocs, false);
 		testInstances       = CreateWekaFeatureSetInstances(testFile, numTestDocs, true);
 	}
+
+    public InstanceImageMap getImageMap() {
+        return theMap;
+    }
 
 	public Instances GetTrainInstances() {
 		return trainInstances;
