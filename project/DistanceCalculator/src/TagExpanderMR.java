@@ -1,3 +1,4 @@
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,35 +30,42 @@ public class TagExpanderMR {
 		@Override
 		public void setup(Context context) {
 			conf = context.getConfiguration();
-		}		
-		
+		}
+
 		@Override
 		public void map(LongWritable key, Text value, Context context)
-		throws IOException, InterruptedException {
-			if(wn == null) {
+				throws IOException, InterruptedException {
+			if (wn == null) {
 				try {
 					wn = WordnetUtil.getInstance();
 				} catch (JWNLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					
+
 					throw new IOException("Could not initialize wordnet util.");
 				}
 			}
-			
+
 			String line = value.toString();
-			String [] parts = line.split("[\\s]+]");
-			
-			String id = parts[0],
-			secret = parts[1],
-			owner = parts[3],
-			joined_tags = parts[5];
-			
-			String [] originalTags = joined_tags.split("\\|");
-			
-			Set<String> expandedTags = new HashSet<String>();			
-			
-			for(String originalTag : originalTags) {
+			String[] parts = line.split("[\\s]+");
+
+			String id = parts[0], secret = parts[1], owner = parts[3];
+
+			String uniqKey = id + "|" + secret + "|" + owner;
+			Text tUniqKey = new Text(uniqKey);
+			if (parts.length < 6) {
+				// no tags
+				context.write(tUniqKey, new Text(""));
+				return;
+			}
+
+			String joined_tags = parts[5];
+
+			String[] originalTags = joined_tags.split("\\|");
+
+			Set<String> expandedTags = new HashSet<String>();
+
+			for (String originalTag : originalTags) {
 				try {
 					expandedTags.addAll(wn.expandWord(originalTag));
 				} catch (JWNLException e) {
@@ -65,37 +73,35 @@ public class TagExpanderMR {
 					e.printStackTrace();
 				}
 			}
-			
-			String uniqKey = id + "|" + secret + "|" + owner;
-			
+
 			for (String tag : originalTags) {
-				context.write(new Text(uniqKey), new Text(tag));
+				context.write(tUniqKey, new Text(tag));
 				context.write(new Text("__ALL__"), new Text(tag));
 			}
-			
+
 			for (String tag : expandedTags) {
-				context.write(new Text(uniqKey), new Text(tag));
+				context.write(tUniqKey, new Text(tag));
 				context.write(new Text("__ALL__"), new Text(tag));
 			}
 		}
 	}
-	
+
 	public static class Reduce extends Reducer<Text, Text, Text, Text> {
 		Configuration conf = null;
 
 		@Override
 		public void setup(Context context) {
 			conf = context.getConfiguration();
-		}	
-		
+		}
+
 		@Override
 		public void reduce(Text key, Iterable<Text> values, Context context) {
 			Set<String> tags = new HashSet<String>();
-			
-			for(Text tag : values) {
+
+			for (Text tag : values) {
 				tags.add(tag.toString());
 			}
-			
+
 			try {
 				context.write(key, new Text(join(tags, ",")));
 			} catch (IOException e) {
@@ -107,18 +113,17 @@ public class TagExpanderMR {
 			}
 		}
 	}
-	
-	public static String join( Iterable< ? extends Object > pColl, String separator )
-    {
-        Iterator< ? extends Object > oIter;
-        if ( pColl == null || ( !( oIter = pColl.iterator() ).hasNext() ) )
-            return "";
-        StringBuilder oBuilder = new StringBuilder( String.valueOf( oIter.next() ) );
-        while ( oIter.hasNext() )
-            oBuilder.append( separator ).append( oIter.next() );
-        return oBuilder.toString();
-    }
-	
+
+	public static String join(Iterable<? extends Object> pColl, String separator) {
+		Iterator<? extends Object> oIter;
+		if (pColl == null || (!(oIter = pColl.iterator()).hasNext()))
+			return "";
+		StringBuilder oBuilder = new StringBuilder(String.valueOf(oIter.next()));
+		while (oIter.hasNext())
+			oBuilder.append(separator).append(oIter.next());
+		return oBuilder.toString();
+	}
+
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
 

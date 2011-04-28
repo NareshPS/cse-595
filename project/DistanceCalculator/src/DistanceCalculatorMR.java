@@ -39,10 +39,13 @@ public class DistanceCalculatorMR {
 		GoogleGists gg = null;
 		Configuration conf = null;
 		public IDistanceCalculator[] dcs = null;
+		private String userCategory = null;
 
 		@Override
 		public void setup(Context context) {
 			conf = context.getConfiguration();
+			userCategory = conf.get("category.name");
+			
 			dcs = new IDistanceCalculator[] { new EuclideanDC(), new CosineDC() };
 			System.out.println(((FileSplit) context.getInputSplit()).getPath()
 					.getName());
@@ -80,6 +83,18 @@ public class DistanceCalculatorMR {
 			// category
 
 			for (String category : categories) {
+				
+				// FIXME: hack, to get flickr category. perhaps no other way
+				if(!image.contains("images/" + category)) {
+					// don't do it for flickr images outside this category
+					continue;
+				}
+				
+				if(userCategory != null && !userCategory.equals(category)){
+					// if a category has been specified, dont do for others
+					continue;
+				}
+				
 				List<Double[]> canonicalVectors = gg.googleGistsByCategory
 						.get(category);
 
@@ -144,6 +159,10 @@ public class DistanceCalculatorMR {
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
 		conf.set("googleImages.dir", args[1]);
+		if(args.length == 4) {
+			System.out.println("Using user category: " + args[3]);
+			conf.set("category.name", args[3]);
+		}
 
 		Job job = new Job(conf, "Distance Calculator");
 
