@@ -18,6 +18,7 @@ import weka.classifiers.trees.J48;
 import weka.classifiers.trees.J48graft;
 import weka.classifiers.bayes.BayesNet;
 import weka.classifiers.functions.SimpleLinearRegression;
+import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -67,7 +68,7 @@ public class GistTagPredictor {
 		// Create instances of required classifiers.
 		HashMap<String, Classifier> classifierMap = new HashMap<String, Classifier>();
         SMO smo = new SMO();
-        smo.setUseRBF(true);
+        smo.setKernel(new RBFKernel()); 
 		classifierMap.put("smo", smo);
 		classifierMap.put("bayes", new NaiveBayes());
 		classifierMap.put("bayesnet", new BayesNet());
