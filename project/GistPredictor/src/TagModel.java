@@ -1,4 +1,8 @@
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 class WordScore implements Comparable<WordScore> {
@@ -29,10 +33,15 @@ public class TagModel {
 	TagModel(String filename) {
 		StreamingFileUtil fUtil = new StreamingFileUtil(filename);
 		String line = null;
+		int count = 1;
 		while ((line = fUtil.getNextLine()) != null) {
+			//System.out.println(count++);
 			String[] tags = line.split("\\|");
 			for (String tag1 : tags) {
 				String cleanedTag1 = StringUtil.clean(tag1);
+				if (cleanedTag1.matches(".*[^a-zA-Z ,].*")) {
+					continue;
+				}
 				HashMap<String, Integer> level2Map = cooccurMap.get(cleanedTag1);
 				if (level2Map == null) {
 					level2Map = new HashMap<String, Integer>();
@@ -49,7 +58,11 @@ public class TagModel {
 				for (String tag2 : tags) {
 					String cleanedTag2 = StringUtil.clean(tag2);
 
-					if (cleanedTag1.compareTo(cleanedTag2) == 0) {
+					if (cleanedTag1.matches(".*[^a-zA-Z ,].*")) {
+						continue;
+					}
+					
+					if (cleanedTag2.matches(".*[^a-zA-Z ,].*")) {
 						continue;
 					}
 					
@@ -63,6 +76,21 @@ public class TagModel {
 			}
 		}
 		fUtil.close();
+		/*
+		for (String word1 : cooccurMap.keySet()) {
+			ArrayList<Integer> cooccurList = new ArrayList<Integer>();
+			for (String word2 : cooccurMap.get(word1).keySet()) {
+				cooccurList.add(cooccurMap.get(word1).get(word2));
+			}
+			Collections.sort(cooccurList);
+			int median = cooccurList.get(cooccurList.size()/2);
+			for (String word2 : cooccurMap.get(word1).keySet()) {
+				HashMap<String, Integer> level2Map = cooccurMap.get(word1);
+				Integer cooccur = level2Map.get(word2);
+				level2Map.put(word2, cooccur * 100/(cooccur + median));
+			}
+		}
+		*/
 	}
 	
 	public void debug() {
@@ -126,11 +154,11 @@ public class TagModel {
 	
 	public static void main(String[] args) {
 		TagModel tagModel = new TagModel(args[0]);
-		tagModel.debug();
+		//tagModel.debug();
 		StreamingFileUtil fUtil = new StreamingFileUtil(args[1]);
 		String line = null;
 		while ((line = fUtil.getNextLine()) != null) {
-			TreeSet<WordScore> bestTags = tagModel.getBestKTags(line, 10);
+			TreeSet<WordScore> bestTags = tagModel.getBestKTags(line, 40);
 			System.out.println("Input tags: " + line);
 			for (WordScore tag : bestTags) {
 				System.out.print(tag.word + ",");
