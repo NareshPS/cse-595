@@ -21,7 +21,6 @@ public class GistFeatureManager {
 	private Instances trainInstances;
 	private Instances testInstances;
 	private Set<String> uniqueTags          = new TreeSet<String>();
-	private static Set<String> featureTags  = new TreeSet<String>();
 
     private InstanceImageMap    theMap; 
 	private int ParseGistFromFile(String fileName, Boolean fillFeatureTags) {
@@ -39,15 +38,8 @@ public class GistFeatureManager {
 			while ((line = dis.readLine()) != null) {
                 numDocs++;
 				Gist gist = Gist.parseGistFromString(line);
-			//	docs.add(gist);
                 if (fillFeatureTags) {
                     uniqueTags.add(gist.getLabel());
-
-                    //Add tags to uniqueTags.
-                    //These tags are the ones part of feature vector.
-                    for (String tag: gist.getTagValues()) {
-                        featureTags.add(tag);
-                    }
                 }
                 gist    = null;
 			}
@@ -70,7 +62,7 @@ public class GistFeatureManager {
 		BufferedInputStream bis = null;
 		DataInputStream dis     = null;
 
-		int numFeatures = Gist.getGistLength() + featureTags.size() + 1;
+		int numFeatures = Gist.getGistLength() + 1;
 
 		FastVector wekaAttributes = new FastVector(numFeatures);
 
@@ -86,11 +78,7 @@ public class GistFeatureManager {
 		for (int i = 1; i <= Gist.getGistLength(); ++i) {
 			wekaAttributes.addElement(new Attribute("gist_" + i));
 		}
-
-        // Add tags as features.
-        for (String tag: featureTags) {
-            wekaAttributes.addElement(new Attribute("tag_" + tag));
-        }
+		
         System.out.println(numFeatures);
 
 		// Weka featureSet
@@ -111,26 +99,10 @@ public class GistFeatureManager {
                         (isTest?uniqueTags.iterator().next():gist.getLabel()));
                 int idx = 1;
                 List<Double> gistValues = gist.getGistValues();
-                List<String> tagValues  = gist.getTagValues();
                 theMap.addImageId(gist.getFileId());
                 for (Double gistValue : gistValues) {
                     anInstance.setValue(
                             (Attribute) wekaAttributes.elementAt(idx++), gistValue);
-                }
-
-                //Add featureTags to weka.
-                for (String tag: featureTags) {
-
-                    if (tagValues.indexOf(tag) != -1) {
-                        anInstance.setValue(
-                                (Attribute) wekaAttributes.elementAt(idx++), new Double(1.0));
-                    }
-                    else {
-                        anInstance.setValue(
-                                (Attribute) wekaAttributes.elementAt(idx++), new Double(0.0));
-                        //anInstance.setMissing(idx++);
-                                //(Attribute) wekaAttributes.elementAt(idx++),new Double(0.1));
-                    }
                 }
 
                 featureSet.add(anInstance);
