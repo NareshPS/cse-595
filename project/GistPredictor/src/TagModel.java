@@ -1,9 +1,12 @@
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import net.didion.jwnl.JWNLException;
 
 class WordScore implements Comparable<WordScore> {
 	public String word;
@@ -30,13 +33,19 @@ public class TagModel {
 	private HashMap<String, HashMap<String, Integer>> cooccurMap = new HashMap<String, HashMap<String,Integer>>();
 	private HashMap<String, Integer> freqMap = new HashMap<String, Integer>();
 	
-	TagModel(String filename) {
+	TagModel(String filename) throws FileNotFoundException, JWNLException {
 		StreamingFileUtil fUtil = new StreamingFileUtil(filename);
+		WordnetUtil wnUtil = WordnetUtil.getInstance();
 		String line = null;
-		int count = 1;
 		while ((line = fUtil.getNextLine()) != null) {
 			//System.out.println(count++);
-			String[] tags = line.split("\\|");
+			String[] curTags = line.split("\\|");
+			TreeSet<String> tags = new TreeSet<String>();
+			for (String tag : curTags) {
+				String cleanedTag = StringUtil.clean(tag);
+				tags.add(cleanedTag);
+				tags.addAll(wnUtil.expandWord(tag));
+			}
 			for (String tag1 : tags) {
 				String cleanedTag1 = StringUtil.clean(tag1);
 				if (cleanedTag1.matches(".*[^a-zA-Z ,].*")) {
@@ -152,7 +161,7 @@ public class TagModel {
 		return bestTags;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException, JWNLException {
 		TagModel tagModel = new TagModel(args[0]);
 		//tagModel.debug();
 		StreamingFileUtil fUtil = new StreamingFileUtil(args[1]);
