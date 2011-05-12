@@ -99,7 +99,7 @@ public class GistFeatureManager {
                         gist.getLabel());
                 int idx = 1;
                 List<Double> gistValues = gist.getGistValues();
-                theMap.addImageId(gist.getFileId());
+                //theMap.addImageId(gist.getFileId());
                 for (Double gistValue : gistValues) {
                     anInstance.setValue(
                             (Attribute) wekaAttributes.elementAt(idx++), gistValue);
@@ -163,7 +163,7 @@ public class GistFeatureManager {
                         "cats");
                 int idx = 1;
                 List<Double> gistValues = gist.getGistValues();
-                theMap.addImageId(gist.getFileId());
+                //theMap.addImageId(gist.getFileId());
                 for (Double gistValue : gistValues) {
                     anInstance.setValue(
                             (Attribute) wekaAttributes.elementAt(idx++), gistValue);
@@ -186,10 +186,10 @@ public class GistFeatureManager {
 	}
 	
 	public GistFeatureManager(String trainFile, String testFile, String imageIdFile) {
-        theMap              = InstanceImageMap.constructMap(imageIdFile);
-        if (theMap == null) {
-            System.out.println("Failed to parse imageIdFile");
-        }
+        //theMap              = InstanceImageMap.constructMap(imageIdFile);
+        //if (theMap == null) {
+        //    System.out.println("Failed to parse imageIdFile");
+        //}
 		int numTrainDocs    = ParseGistFromFile(trainFile, true);
 		//int numTestDocs     = ParseGistFromFile(testFile, false);
 		trainInstances      = CreateWekaFeatureSetInstancesTrain(trainFile, numTrainDocs);
