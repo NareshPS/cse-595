@@ -1,3 +1,7 @@
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,6 +26,7 @@ import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.SerializationHelper;
 import weka.core.SparseInstance;
 
 public class GistTagPredictor {
@@ -91,24 +96,22 @@ public class GistTagPredictor {
 					+ "dtrees,dtreesgraft,knn,rulebased");
 		}
 
-		// Create the feature skips.
-		HashSet<String> featureSkipSet = new HashSet<String>();
-		if (argv.length == 6) {
-			String[] features = argv[5].split(",");
-			for (String feature : features) {
-				featureSkipSet.add(feature);
-			}
-		}
-
+		Classifier classifier = null;
+		
 		// Create training and test data.
 		GistFeatureManager featMgr = new GistFeatureManager(argv[0], argv[1], argv[2]);
 		Instances trainingSet = featMgr.GetTrainInstances();
 		Instances testingSet = featMgr.GetTestInstances();
 
 		// Choose the classifier.
-		Classifier classifier = classifierMap.get(argv[4]);
+		classifier = classifierMap.get(argv[4]);
 		classifier.buildClassifier(trainingSet);
-
+		if (argv.length == 5) {
+			File classifierOut = new File("/scratch2/rohith/wap/classifier.out");
+			FileOutputStream fos = new FileOutputStream(classifierOut);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			SerializationHelper.write(bos, classifier);
+		}
         //Initialize HTMLWriter.
         HTMLHandler     htmlWriter   = new HTMLHandler(argv [3]); 
 		
