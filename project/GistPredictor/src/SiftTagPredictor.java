@@ -24,14 +24,14 @@ public class SiftTagPredictor {
 
 	public static void main(String[] args) throws Exception {
 
-    System.err.println("Building tag model ... ");
+		System.err.println("Building tag model ... ");
 		TagModel tagModel = new TagModel(args[0]);
-    System.err.println("done.");
+		System.err.println("done.");
 
-    System.err.print("Deserializing classifier model ... ");
+		System.err.print("Deserializing classifier model ... ");
 		Classifier cls = (Classifier) weka.core.SerializationHelper
 				.read(new FileInputStream(new File(args[1])));
-    System.err.println("done.");
+		System.err.println("done.");
 
 		List<String> allTags = new ArrayList<String>();
 		Scanner tagsIn = new Scanner(new FileReader(args[2]));
@@ -52,17 +52,33 @@ public class SiftTagPredictor {
 			Set<WordScore> tagScores = tagModel.getBestKTags(gist.getLabel(),
 					TagPredictThreshold * 2);
 
+			FastVector wekaAttributes = new FastVector(Gist.getGistLength() + 1);
+
+			// Add the class attribute.
+			FastVector classValues = new FastVector(allTags.size());
+			for (String tag : allTags) {
+				classValues.addElement(tag);
+			}
+			Attribute classAttribute = new Attribute("tagClass", classValues);
+			wekaAttributes.addElement(classAttribute);
+
+			// Add feature names.
+			for (int i = 1; i <= Gist.getGistLength(); ++i) {
+				wekaAttributes.addElement(new Attribute("gist_" + i));
+			}
+
 			SparseInstance testInstance = new SparseInstance(
 					Gist.getGistLength() + 1);
 
 			int idx = 1;
 			List<Double> gistValues = gist.getGistValues();
 			for (Double gistValue : gistValues) {
-				testInstance.setValue(idx++, gistValue);
+				testInstance.setValue(
+						(Attribute) wekaAttributes.elementAt(idx++), gistValue);
 			}
 
-			testInstance.setValue(new Attribute("gist" + 0), "");
-      System.err.print("\r" + gist.getFileId());
+			testInstance.setValue((Attribute) wekaAttributes.elementAt(0), "");
+			System.err.print("\r" + gist.getFileId());
 			double[] probabilities = cls.distributionForInstance(testInstance);
 
 			List<WordScore> testScores = new ArrayList<WordScore>();
@@ -91,16 +107,17 @@ public class SiftTagPredictor {
 			WordScore[][] allScores = new WordScore[][] {
 					tagScores.toArray(new WordScore[] {}),
 					testScores.toArray(new WordScore[] {}),
-					intersection.toArray(new WordScore[] {})
-			};
+					intersection.toArray(new WordScore[] {}) };
 			for (WordScore[] scores : allScores) {
-				System.out.println(StringUtils.join(ArrayUtils.subarray(scores, 0, TagPredictThreshold), ","));
+				System.out.println(StringUtils.join(
+						ArrayUtils.subarray(scores, 0, TagPredictThreshold),
+						","));
 			}
 
 			for (WordScore[] scores : allScores) {
 				int count = 0;
-				for(int i = 0; i < 5; ++i) {
-					if(originalTags.contains(scores[i].word)) {
+				for (int i = 0; i < 5; ++i) {
+					if (originalTags.contains(scores[i].word)) {
 						count += 1;
 					}
 				}
