@@ -21,8 +21,8 @@ public class GistFeatureManager {
 	private Instances trainInstances;
 	private Instances testInstances;
 	private Set<String> uniqueTags          = new TreeSet<String>();
-
     private InstanceImageMap    theMap; 
+    
 	private int ParseGistFromFile(String fileName, Boolean fillFeatureTags) {
 		File file               = new File(fileName);
 		FileInputStream fis     = null;
@@ -191,9 +191,9 @@ public class GistFeatureManager {
             System.out.println("Failed to parse imageIdFile");
         }
 		int numTrainDocs    = ParseGistFromFile(trainFile, true);
-		int numTestDocs     = ParseGistFromFile(testFile, false);
+		//int numTestDocs     = ParseGistFromFile(testFile, false);
 		trainInstances      = CreateWekaFeatureSetInstancesTrain(trainFile, numTrainDocs);
-		testInstances       = CreateWekaFeatureSetInstancesTest(testFile, numTestDocs);
+		//testInstances       = CreateWekaFeatureSetInstancesTest(testFile, numTestDocs);
 	}
 
     public InstanceImageMap getImageMap() {

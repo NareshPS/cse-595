@@ -101,7 +101,7 @@ public class GistTagPredictor {
 		// Create training and test data.
 		GistFeatureManager featMgr = new GistFeatureManager(argv[0], argv[1], argv[2]);
 		Instances trainingSet = featMgr.GetTrainInstances();
-		Instances testingSet = featMgr.GetTestInstances();
+		//Instances testingSet = featMgr.GetTestInstances();
 
 		// Choose the classifier.
 		classifier = classifierMap.get(argv[4]);
@@ -113,8 +113,9 @@ public class GistTagPredictor {
 			SerializationHelper.write(bos, classifier);
 		}
         //Initialize HTMLWriter.
-        HTMLHandler     htmlWriter   = new HTMLHandler(argv [3]); 
+        //HTMLHandler     htmlWriter   = new HTMLHandler(argv [3]); 
 		
+		/*
 		Attribute classAttribute = trainingSet.attribute("tagClass");
 		int numValues = classAttribute.numValues();
 		List<String> labels = new ArrayList<String>();
@@ -144,6 +145,6 @@ public class GistTagPredictor {
 		}
 
         htmlWriter.close();
-
+		*/
 	}
 }
