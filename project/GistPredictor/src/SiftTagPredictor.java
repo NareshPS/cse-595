@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,32 +13,41 @@ import org.apache.commons.lang.StringUtils;
 
 import weka.classifiers.Classifier;
 import weka.core.SparseInstance;
+import weka.core.Attribute;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.SparseInstance;
 
 public class SiftTagPredictor {
 	private static final int TagPredictThreshold = 20;
 
 	public static void main(String[] args) throws Exception {
 
+    System.err.println("Building tag model ... ");
 		TagModel tagModel = new TagModel(args[0]);
+    System.err.println("done.");
 
+    System.err.print("Deserializing classifier model ... ");
 		Classifier cls = (Classifier) weka.core.SerializationHelper
-				.read(args[1]);
+				.read(new FileInputStream(new File(args[1])));
+    System.err.println("done.");
 
 		List<String> allTags = new ArrayList<String>();
 		Scanner tagsIn = new Scanner(new FileReader(args[2]));
 		while (tagsIn.hasNextLine())
 			allTags.add(tagsIn.nextLine());
 
-		Scanner in = new Scanner(System.in);
+		Scanner in = new Scanner(new FileReader(args[3]));
 
 		while (in.hasNextLine()) {
 			Gist gist = Gist.parseGistFromString(in.nextLine());
-			
+
 			Set<String> originalTags = new HashSet<String>();
 			for (String originalTag : gist.getLabel().split("|")) {
 				originalTags.add(originalTag);
 			}
-			
+
 			// get twice the number of tags we want to predict
 			Set<WordScore> tagScores = tagModel.getBestKTags(gist.getLabel(),
 					TagPredictThreshold * 2);
@@ -51,7 +61,8 @@ public class SiftTagPredictor {
 				testInstance.setValue(idx++, gistValue);
 			}
 
-			testInstance.setValue(0, "");
+			testInstance.setValue(new Attribute("gist" + 0), "");
+      System.err.print("\r" + gist.getFileId());
 			double[] probabilities = cls.distributionForInstance(testInstance);
 
 			List<WordScore> testScores = new ArrayList<WordScore>();
@@ -74,9 +85,9 @@ public class SiftTagPredictor {
 				if (numPredicted >= TagPredictThreshold)
 					break;
 			}
-			
+
 			System.out.println(gist.getFileId());
-			
+
 			WordScore[][] allScores = new WordScore[][] {
 					tagScores.toArray(new WordScore[] {}),
 					testScores.toArray(new WordScore[] {}),
@@ -85,7 +96,7 @@ public class SiftTagPredictor {
 			for (WordScore[] scores : allScores) {
 				System.out.println(StringUtils.join(ArrayUtils.subarray(scores, 0, TagPredictThreshold), ","));
 			}
-			
+
 			for (WordScore[] scores : allScores) {
 				int count = 0;
 				for(int i = 0; i < 5; ++i) {
@@ -93,10 +104,10 @@ public class SiftTagPredictor {
 						count += 1;
 					}
 				}
-				
+
 				System.out.print(count + " ");
 			}
-			
+
 			System.out.println();
 			System.out.println();
 		}
