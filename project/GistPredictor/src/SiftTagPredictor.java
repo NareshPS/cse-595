@@ -40,7 +40,52 @@ public class SiftTagPredictor {
 
 		Scanner in = new Scanner(new FileReader(args[3]));
 
+		FastVector wekaAttributes = new FastVector(Gist.getGistLength() + 1);
+
+		FastVector classValues = new FastVector(allTags.size());
+		for (String tag : allTags) {
+			classValues.addElement(tag);
+		}
+
+		Attribute classAttribute = new Attribute("tagClass", classValues);
+		wekaAttributes.addElement(classAttribute);
+
+		// Add feature names.
+		for (int i = 1; i <= Gist.getGistLength(); ++i) {
+			wekaAttributes.addElement(new Attribute("gist_" + i));
+		}
+
+		List<SparseInstance> instances = new ArrayList<SparseInstance>();
+
 		while (in.hasNextLine()) {
+			Gist gist = Gist.parseGistFromString(in.nextLine());
+
+			// Add the class attribute.
+			SparseInstance testInstance = new SparseInstance(
+					Gist.getGistLength() + 1);
+
+			int idx = 1;
+			List<Double> gistValues = gist.getGistValues();
+			for (Double gistValue : gistValues) {
+				testInstance.setValue(
+						(Attribute) wekaAttributes.elementAt(idx++), gistValue);
+			}
+
+			testInstance.setValue((Attribute) wekaAttributes.elementAt(0),
+					allTags.get(0));
+
+			instances.add(testInstance);
+		}
+
+		Instances featureSet = new Instances("Features", wekaAttributes,
+				instances.size());
+		in.close();
+
+		in = new Scanner(new FileReader(args[3]));
+
+		for (int fi = 0; fi < featureSet.numInstances(); ++fi) {
+			Instance testInstance = featureSet.instance(fi);
+
 			Gist gist = Gist.parseGistFromString(in.nextLine());
 
 			Set<String> originalTags = new HashSet<String>();
@@ -52,32 +97,6 @@ public class SiftTagPredictor {
 			Set<WordScore> tagScores = tagModel.getBestKTags(gist.getLabel(),
 					TagPredictThreshold * 2);
 
-			FastVector wekaAttributes = new FastVector(Gist.getGistLength() + 1);
-
-			// Add the class attribute.
-			FastVector classValues = new FastVector(allTags.size());
-			for (String tag : allTags) {
-				classValues.addElement(tag);
-			}
-			Attribute classAttribute = new Attribute("tagClass", classValues);
-			wekaAttributes.addElement(classAttribute);
-
-			// Add feature names.
-			for (int i = 1; i <= Gist.getGistLength(); ++i) {
-				wekaAttributes.addElement(new Attribute("gist_" + i));
-			}
-
-			SparseInstance testInstance = new SparseInstance(
-					Gist.getGistLength() + 1);
-
-			int idx = 1;
-			List<Double> gistValues = gist.getGistValues();
-			for (Double gistValue : gistValues) {
-				testInstance.setValue(
-						(Attribute) wekaAttributes.elementAt(idx++), gistValue);
-			}
-
-			testInstance.setValue((Attribute) wekaAttributes.elementAt(0), "");
 			System.err.print("\r" + gist.getFileId());
 			double[] probabilities = cls.distributionForInstance(testInstance);
 
@@ -127,6 +146,7 @@ public class SiftTagPredictor {
 
 			System.out.println();
 			System.out.println();
+
 		}
 	}
 }
