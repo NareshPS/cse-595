@@ -33,18 +33,23 @@ public class SiftTagPredictorOneToAll {
 
 		Map<String, List<String>> tagToClasses = new HashMap<String, List<String>>();
 
-		System.err.print("Deserializing classifier models ... ");
+		System.err.println("Reading tag classes ... ");
 		Scanner classifiersIn = new Scanner(new FileReader(args[1]));
 		while (classifiersIn.hasNextLine()) {
 			String line = classifiersIn.nextLine();
 			String tag = line.substring(line.lastIndexOf('/') + 1, line.indexOf('.'));
+      System.err.println("Reading tag " + tag);
 
 			tagToClasses.put(tag, new ArrayList<String>());
-			Scanner classIn = new Scanner(new FileReader(line.replace(".classfier.",
+			Scanner classIn = new Scanner(new FileReader(line.replace(".classifier.",
 			    ".labels.")));
 			while (classIn.hasNextLine()) {
 				tagToClasses.get(tag).add(classIn.nextLine());
 			}
+
+      System.err.println("found " + StringUtils.join(tagToClasses.get(tag).toArray(), ","));
+
+      classIn.close();
 		}
 		classifiersIn.close();
 		System.err.println("done.");
@@ -90,9 +95,9 @@ public class SiftTagPredictorOneToAll {
 			instances.add(testInstance);
 		}
 
+		in.close();
 		Instances featureSet = new Instances("Features", wekaAttributes,
 		    instances.size());
-		in.close();
 
 		for (Instance instance : instances)
 			featureSet.add(instance);
@@ -115,7 +120,7 @@ public class SiftTagPredictorOneToAll {
 			Set<String> excludedTags = new HashSet<String>();
 			Set<String> trainTags = new HashSet<String>();
 
-			int EXCLUDED = 5;
+			int EXCLUDED = 5 < originalTagList.size() ? 5 : originalTagList.size() - 1;
 
 			for (int i = 0; i < EXCLUDED; ++i) {
 				excludedTags.add(originalTagList.get(i));
@@ -138,7 +143,7 @@ public class SiftTagPredictorOneToAll {
 				    line.indexOf('.'));
 
 				System.err.println("Loading classifier for tag: " + tag);
-				
+
 				Classifier cls = (Classifier) weka.core.SerializationHelper.read(line);
 				double[] probabilities = cls.distributionForInstance(testInstance);
 				testScores.add(new WordScore(tag, probabilities[tagToClasses.get(tag)
