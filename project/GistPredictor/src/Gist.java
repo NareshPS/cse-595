@@ -21,7 +21,7 @@ public class Gist {
         for (int i = 0; i < getGistLength(); i++) {
 			gist.gistValues.add(new Double(gistStrVals [i]));
         }
-        
+
         return gist;
 	}
 
@@ -32,7 +32,7 @@ public class Gist {
     	}
     	return ret;
     }
-	
+
 	public List<Double> getGistValues() {
 		return gistValues;
 	}
@@ -48,12 +48,12 @@ public class Gist {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
+
 	public static int getGistLength() {
-		return 960;
+		return 1050;
 	}
 
     public String getFileId() {
-        return fileId; 
+        return fileId;
     }
 }

@@ -27,12 +27,17 @@ class WordScore implements Comparable<WordScore> {
 			return this.word.compareTo(otherWs.word);
 		}
 	}
+
+  @Override
+  public String toString() {
+    return word + ":" + score;
+  }
 }
 
 public class TagModel {
 	private HashMap<String, HashMap<String, Integer>> cooccurMap = new HashMap<String, HashMap<String,Integer>>();
 	private HashMap<String, Integer> freqMap = new HashMap<String, Integer>();
-	
+
 	TagModel(String filename) throws FileNotFoundException, JWNLException {
 		StreamingFileUtil fUtil = new StreamingFileUtil(filename);
 		WordnetUtil wnUtil = WordnetUtil.getInstance();
@@ -56,25 +61,25 @@ public class TagModel {
 					level2Map = new HashMap<String, Integer>();
 					cooccurMap.put(cleanedTag1, level2Map);
 				}
-				
+
 				Integer freq = freqMap.get(cleanedTag1);
 				if (freq == null) {
 					freqMap.put(cleanedTag1, 1);
 				} else {
 					freqMap.put(cleanedTag1, freq + 1);
 				}
-				
+
 				for (String tag2 : tags) {
 					String cleanedTag2 = StringUtil.clean(tag2);
 
 					if (cleanedTag1.matches(".*[^a-zA-Z ,].*")) {
 						continue;
 					}
-					
+
 					if (cleanedTag2.matches(".*[^a-zA-Z ,].*")) {
 						continue;
 					}
-					
+
 					Integer cooccur = level2Map.get(cleanedTag2);
 					if (cooccur == null) {
 						level2Map.put(cleanedTag2, 1);
@@ -101,25 +106,25 @@ public class TagModel {
 		}
 		*/
 	}
-	
+
 	public void debug() {
 		for (String tag1 : freqMap.keySet()) {
 			System.out.println("Freq of " + tag1 + " = " + freqMap.get(tag1));
 		}
-		
+
 		for (String tag1 : cooccurMap.keySet()) {
 			for (String tag2 : cooccurMap.get(tag1).keySet()) {
 				System.out.println(tag1 + "," + tag2 + " = " + cooccurMap.get(tag1).get(tag2));
 			}
 		}
 	}
-	
+
 	public TreeSet<WordScore> getBestKTags(String line, int k) {
 		TreeSet<WordScore> bestTags = new TreeSet<WordScore>();
 		String[] tags = line.split("\\|");
-		
+
 		Integer numTags = freqMap.size();
-		
+
 		for (String tag1 : freqMap.keySet()) {
 			double curTagProb = 0.0;
 			for (String tag2 : tags) {
@@ -127,7 +132,7 @@ public class TagModel {
 				if (tag1.compareTo(cleanedTag2) == 0) {
 					continue;
 				}
-				
+
 				HashMap<String, Integer> level2Map = cooccurMap.get(tag1);
 				Integer cooccur = null;
 				if (level2Map != null) {
@@ -140,7 +145,7 @@ public class TagModel {
 				} else {
 					cooccur = 1;
 				}
-				
+
 
 				Integer freq = null;
 				freq = freqMap.get(cleanedTag2);
@@ -149,7 +154,7 @@ public class TagModel {
 				} else {
 					freq = numTags;
 				}
-				
+
 				double curCondProb = Math.log((double)cooccur/(double)freq);
 				curTagProb += curCondProb;
 			}
@@ -160,7 +165,7 @@ public class TagModel {
 		}
 		return bestTags;
 	}
-	
+
 	public static void main(String[] args) throws FileNotFoundException, JWNLException {
 		TagModel tagModel = new TagModel(args[0]);
 		//tagModel.debug();
