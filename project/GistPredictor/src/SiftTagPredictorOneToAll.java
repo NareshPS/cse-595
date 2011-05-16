@@ -103,8 +103,6 @@ public class SiftTagPredictorOneToAll {
 		for (Instance instance : instances)
 			featureSet.add(instance);
 
-		in = new Scanner(new FileReader(args[3]));
-
 		classifiersIn = new Scanner(new FileReader(args[1]));
 		Map<String, Map<String, WordScore>> tagIdScoreMap = new HashMap<String, Map<String, WordScore>>();
 		while (classifiersIn.hasNextLine()) {
@@ -117,6 +115,7 @@ public class SiftTagPredictorOneToAll {
 
 			Classifier cls = (Classifier) weka.core.SerializationHelper.read(line);
 
+			in = new Scanner(new FileReader(args[3]));
 			for (int fi = 0; fi < featureSet.numInstances(); ++fi) {
 				Instance testInstance = featureSet.instance(fi);
 				Gist gist = Gist.parseGistFromString(in.nextLine());
@@ -126,6 +125,7 @@ public class SiftTagPredictorOneToAll {
 				idScoreMap.put(gist.getFileId(), new WordScore(tag,
 				    probabilities[tagToClasses.get(tag).indexOf(tag)]));
 			}
+			in.close();
 
 			tagIdScoreMap.put(tag, idScoreMap);
 
@@ -133,7 +133,6 @@ public class SiftTagPredictorOneToAll {
 			System.gc();
 		}
 		classifiersIn.close();
-		in.close();
 
 		in = new Scanner(new FileReader(args[3]));
 
@@ -170,9 +169,9 @@ public class SiftTagPredictorOneToAll {
 
 			// TODO: get probabilities for each word
 			List<WordScore> testScores = new ArrayList<WordScore>();
-			for(String tag : tagIdScoreMap.keySet()){
+			for (String tag : tagIdScoreMap.keySet()) {
 				testScores.add(tagIdScoreMap.get(tag).get(gist.getFileId()));
-			}			
+			}
 			Collections.sort(testScores);
 
 			List<WordScore> intersection = new ArrayList<WordScore>();
