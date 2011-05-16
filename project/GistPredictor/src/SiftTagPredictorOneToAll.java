@@ -31,28 +31,27 @@ public class SiftTagPredictorOneToAll {
 		TagModel tagModel = new TagModel(args[0]);
 		System.err.println("done.");
 
-		Map<String, Classifier> classifierMap = new HashMap<String, Classifier>();
 		Map<String, List<String>> tagToClasses = new HashMap<String, List<String>>();
 
 		System.err.print("Deserializing classifier models ... ");
-		Scanner classifiersIn = new Scanner(new FileReader(args[1]));		
-		while(classifiersIn.hasNextLine()) {
+		Scanner classifiersIn = new Scanner(new FileReader(args[1]));
+		while (classifiersIn.hasNextLine()) {
 			String line = classifiersIn.nextLine();
 			String tag = line.substring(line.lastIndexOf('/') + 1, line.indexOf('.'));
-			
-			classifierMap.put(tag, (Classifier) weka.core.SerializationHelper.read(line));
+
 			tagToClasses.put(tag, new ArrayList<String>());
-			Scanner classIn = new Scanner(new FileReader(line.replace(".classfier.", ".labels.")));
-			while(classIn.hasNextLine()) {
+			Scanner classIn = new Scanner(new FileReader(line.replace(".classfier.",
+			    ".labels.")));
+			while (classIn.hasNextLine()) {
 				tagToClasses.get(tag).add(classIn.nextLine());
 			}
 		}
 		classifiersIn.close();
 		System.err.println("done.");
-		
+
 		FastVector wekaAttributes = new FastVector(Gist.getGistLength() + 1);
 
-		String [] classLabels = new String [] {"tag", "not_tag"}; 
+		String[] classLabels = new String[] { "tag", "not_tag" };
 		FastVector classValues = new FastVector(classLabels.length);
 		for (String tag : classLabels) {
 			classValues.addElement(tag);
@@ -70,6 +69,7 @@ public class SiftTagPredictorOneToAll {
 
 		// Rad in the gist feature file and predict for all the instances
 		// ony to prepare the set of instances
+
 		Scanner in = new Scanner(new FileReader(args[3]));
 		while (in.hasNextLine()) {
 			Gist gist = Gist.parseGistFromString(in.nextLine());
@@ -114,29 +114,39 @@ public class SiftTagPredictorOneToAll {
 
 			Set<String> excludedTags = new HashSet<String>();
 			Set<String> trainTags = new HashSet<String>();
-			
+
 			int EXCLUDED = 5;
-			
-			for(int i = 0; i < EXCLUDED; ++i) {
+
+			for (int i = 0; i < EXCLUDED; ++i) {
 				excludedTags.add(originalTagList.get(i));
 			}
 
-			for(int i = EXCLUDED; i < originalTagList.size(); ++i) {
+			for (int i = EXCLUDED; i < originalTagList.size(); ++i) {
 				trainTags.add(originalTagList.get(i));
 			}
 
 			// get twice the number of tags we want to predict
-			Set<WordScore> tagScores = tagModel.getBestKTags(StringUtils.join(trainTags, "|"),
-			    TagPredictThreshold * 2);
+			Set<WordScore> tagScores = tagModel.getBestKTags(
+			    StringUtils.join(trainTags, "|"), TagPredictThreshold * 2);
 
 			// TODO: get probabilities for each word
 			List<WordScore> testScores = new ArrayList<WordScore>();
-			for(String tag : classifierMap.keySet()) {
-				Classifier cls = classifierMap.get(tag);
-				double[] probabilities = cls.distributionForInstance(testInstance);
-				testScores.add(new WordScore(tag, probabilities[tagToClasses.get(tag).indexOf(tag)]));
-			}
+			classifiersIn = new Scanner(new FileReader(args[1]));
+			while (classifiersIn.hasNextLine()) {
+				String line = classifiersIn.nextLine();
+				String tag = line.substring(line.lastIndexOf('/') + 1,
+				    line.indexOf('.'));
 
+				System.err.println("Loading classifier for tag: " + tag);
+				
+				Classifier cls = (Classifier) weka.core.SerializationHelper.read(line);
+				double[] probabilities = cls.distributionForInstance(testInstance);
+				testScores.add(new WordScore(tag, probabilities[tagToClasses.get(tag)
+				    .indexOf(tag)]));
+
+				cls = null;
+				System.gc();
+			}
 			Collections.sort(testScores);
 
 			List<WordScore> intersection = new ArrayList<WordScore>();
@@ -157,7 +167,7 @@ public class SiftTagPredictorOneToAll {
 			Collections.sort(intersection);
 
 			System.out.println(gist.getFileId());
-			
+
 			System.out.println(StringUtils.join(excludedTags.toArray(), ","));
 
 			WordScore[][] allScores = new WordScore[][] {
