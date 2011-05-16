@@ -38,7 +38,7 @@ public class SiftTagPredictorOneToAll {
 		while (classifiersIn.hasNextLine()) {
 			String line = classifiersIn.nextLine();
 			String tag = line.substring(line.lastIndexOf('/') + 1, line.indexOf('.'));
-      System.err.println("Reading tag " + tag);
+			System.err.println("Reading tag " + tag);
 
 			tagToClasses.put(tag, new ArrayList<String>());
 			Scanner classIn = new Scanner(new FileReader(line.replace(".classifier.",
@@ -47,9 +47,10 @@ public class SiftTagPredictorOneToAll {
 				tagToClasses.get(tag).add(classIn.nextLine());
 			}
 
-      System.err.println("found " + StringUtils.join(tagToClasses.get(tag).toArray(), ","));
+			System.err.println("found "
+			    + StringUtils.join(tagToClasses.get(tag).toArray(), ","));
 
-      classIn.close();
+			classIn.close();
 		}
 		classifiersIn.close();
 		System.err.println("done.");
@@ -104,6 +105,38 @@ public class SiftTagPredictorOneToAll {
 
 		in = new Scanner(new FileReader(args[3]));
 
+		classifiersIn = new Scanner(new FileReader(args[1]));
+		Map<String, Map<String, WordScore>> tagIdScoreMap = new HashMap<String, Map<String, WordScore>>();
+		while (classifiersIn.hasNextLine()) {
+			String line = classifiersIn.nextLine();
+			String tag = line.substring(line.lastIndexOf('/') + 1, line.indexOf('.'));
+
+			System.err.println("Loading classifier for tag: " + tag);
+
+			Map<String, WordScore> idScoreMap = new HashMap<String, WordScore>();
+
+			Classifier cls = (Classifier) weka.core.SerializationHelper.read(line);
+
+			for (int fi = 0; fi < featureSet.numInstances(); ++fi) {
+				Instance testInstance = featureSet.instance(fi);
+				Gist gist = Gist.parseGistFromString(in.nextLine());
+
+				double[] probabilities = cls.distributionForInstance(testInstance);
+
+				idScoreMap.put(gist.getFileId(), new WordScore(tag,
+				    probabilities[tagToClasses.get(tag).indexOf(tag)]));
+			}
+
+			tagIdScoreMap.put(tag, idScoreMap);
+
+			cls = null;
+			System.gc();
+		}
+		classifiersIn.close();
+		in.close();
+
+		in = new Scanner(new FileReader(args[3]));
+
 		for (int fi = 0; fi < featureSet.numInstances(); ++fi) {
 			Instance testInstance = featureSet.instance(fi);
 
@@ -120,7 +153,8 @@ public class SiftTagPredictorOneToAll {
 			Set<String> excludedTags = new HashSet<String>();
 			Set<String> trainTags = new HashSet<String>();
 
-			int EXCLUDED = 5 < originalTagList.size() ? 5 : originalTagList.size() - 1;
+			int EXCLUDED = 5 < originalTagList.size() ? 5
+			    : originalTagList.size() - 1;
 
 			for (int i = 0; i < EXCLUDED; ++i) {
 				excludedTags.add(originalTagList.get(i));
@@ -136,22 +170,9 @@ public class SiftTagPredictorOneToAll {
 
 			// TODO: get probabilities for each word
 			List<WordScore> testScores = new ArrayList<WordScore>();
-			classifiersIn = new Scanner(new FileReader(args[1]));
-			while (classifiersIn.hasNextLine()) {
-				String line = classifiersIn.nextLine();
-				String tag = line.substring(line.lastIndexOf('/') + 1,
-				    line.indexOf('.'));
-
-				System.err.println("Loading classifier for tag: " + tag);
-
-				Classifier cls = (Classifier) weka.core.SerializationHelper.read(line);
-				double[] probabilities = cls.distributionForInstance(testInstance);
-				testScores.add(new WordScore(tag, probabilities[tagToClasses.get(tag)
-				    .indexOf(tag)]));
-
-				cls = null;
-				System.gc();
-			}
+			for(String tag : tagIdScoreMap.keySet()){
+				testScores.add(tagIdScoreMap.get(tag).get(gist.getFileId()));
+			}			
 			Collections.sort(testScores);
 
 			List<WordScore> intersection = new ArrayList<WordScore>();
