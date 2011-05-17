@@ -114,6 +114,27 @@ For this experimental setup, we trained a classifier one for each unique tag app
 machines to learn the visual features for individual tags. It turns out that the performance of
 this classifier is worse when compared with a single classifier with multi-class prediction.
 
+\subsection{Human Evaluation}
+The above mentioned statistics would provide a notion of quality of the tags suggested. But
+we cannot compare it with the quality of the original tags. For this reason, we perform human
+evaluation of the input tags for the given image. Human evaluation is peformed for each of the
+output tag and the original tags. A score from 1 to 4 is assigned to each of the tag, 1 being
+lowest on relevance scale and 4 being highest on relevance scale. During evaluation, tags which
+were about places and not obvious in the image as part of content were scored as 1. For meta images,
+(ie) images which are photos of the writings, visual features will be of very little use. But
+text features would prove to be good. Human evaluation was performed for tags expanded with
+text only features, visual only features and text+visual features. We also performed human 
+evaluation of the original tags so that we could compare the scores of the original tags with
+the suggested tags. Table() tabulates the results of the human evaluation.
+
+Put the data.
+
+We also found that when the number of tags in the image were less and those ones were very relevant,
+the quality of tags expanded tended to be lesser. On the other hand when the original tags were bad,
+we were able to suggest better quality tags. We studied the score pattern of original tags with respect
+to the suggested tag. Figure() shows that when the original tag quality goes down, the suggested tag
+quality goes up and vice versa.
+
 Manuscripts must be in two-column format.  Exceptions to the
 two-column format include the title, authors' names and complete
 addresses, which must be centered at the top of the first page, and
