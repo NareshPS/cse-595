@@ -14,6 +14,8 @@
 \usepackage{cse595}
 \usepackage{url}
 \usepackage{latexsym}
+\usepackage{graphicx}
+
 %\setlength\titlebox{6.5cm}    % You can expand the title box if you
 % really have to
 
@@ -57,7 +59,7 @@ makes sense for the photo group as a whole, turns out to be irrelevant for many 
 Poorly tagged images and under tagged images are other issues with commnunity tagging.
 
 In this work, we present a method to automatically expand the given tags using text features and
-rank the expanded tags with the visual features to highgly score those tags which are relevant to 
+rank the expanded tags with the visual features to highgly score those tags which are relevant to
 the given image. We present multiple statistics about the suggested tags and also perform human
 evaluation to compute the human perceived goodness of the suggested tags.
 
@@ -324,19 +326,27 @@ since not all readers understand all such characters and terms.
 Inline transliteration or translation can be represented in
 the order of: original-form transliteration ``translation''.
 
-\section{Length of Submission}
-\label{sec:length}
+\section{Implementation}
+\begin{figure*}
+\includegraphics[width=0.8\textwidth]{model.png}
+\end{figure*}
 
-Long papers may consist of up to 8 pages of content (excluding references),
-and short papers may consist of up to 4 pages of content (excluding references).
-Both long and short papers may include any additional number of pages consisting
-\emph{solely} of references.
-(Appendices count against the eight or four pages, not the additional references pages).
-All illustrations, references, and appendices must be
-accommodated within these page limits, observing the formatting
-instructions given in the present document. Papers that do not
-conform to the specified length and formatting requirements are
-subject to be rejected without review.
+We downloaded [a lot of] Flickr images, pertaining to pre-selected categories.
+For each category, we performed a Google search to get canonical images for
+those vcategories. We found that for any given keyword, the results returned
+by Google were consistently more represnetative of that category. We used the
+most similar Flickr images (based on Euclidean distance of the gist vectors)
+for training.
+
+\begin{figure*}
+\includegraphics[width=0.8\textwidth]{tagExpansion.png}
+\end{figure*}
+
+We trained two models, a tag model and a visual model trained on the visual
+features of the images. We used two visual features, gist vectors and spatial
+pyramid based on [someones] method. We build a bayes model for the tags using
+the co-occurence statistics from the tags of the training images. We evaluated
+multiple calssifiers on the visual features, including smo and bayesian net.
 
 
 \section*{Acknowledgments}
