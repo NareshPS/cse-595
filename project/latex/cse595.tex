@@ -39,41 +39,25 @@ to the existing tags, and use visual features to maintain the relevance of
 the suggested tags to the image under consideration.
 \end{abstract}
 
-\section{Credits}
-
-This document has been adapted from the instructions for ACL-IJCNLP-2009
-proceedings, by Jing-Shin Chang and Regina Barzilay.
-Instructions for those proceedings were in turn
-based on the formats of earlier ACL and EACL Conference
-proceedings. Those versions were written by several persons, including
-John Chen, Henry S. Thompson and Donald Walker.
-
 \section{Introduction}
+Flickr provides an image sharing service for users, and allows them to tag them
+with descriptive words in order to help users find these images using keywords and
+search terms. In some cases, the tags asssigned to the image are not exhaustive -
+there remain objects in the potograph in the image that are not described in the
+tags. Conversely, some tags are not descriptive, sometimes the indicate the
+context/circumstance around the photograph - for example, the camera model, the date
+etc.
 
-The following instructions are directed to authors of papers submitted
-to ACL-2010 or accepted
-for publication in its proceedings. All authors are required
-to adhere to these specifications. Authors are required to provide a
-Portable Document Format (PDF)
-% das: removed reference to PostScript
-% and PostScript
-version of their papers. \textbf{The proceedings will be printed on A4
-  paper}. Authors from countries in which access to word-processing
-systems is limited should contact the publication chairs Jing-Shin Chang
-(\texttt{jshin@csie.ncnu.edu.tw}) and Philipp Koehn
-(\texttt{pkoehn@inf.ed.ac.uk}) as soon as possible.
+We wish to alleviate both the problem of eliminating noisy tags from a photograph, and
+also to bring in additional relevant tags, so that users are able to search and
+query for images.
 
-\section{General Instructions}
-
-Manuscripts must be in two-column format.  Exceptions to the
-two-column format include the title, authors' names and complete
-addresses, which must be centered at the top of the first page, and
-any full-width figures or tables (see the guidelines in
-Subsection~\ref{ssec:first}). {\bf Type single-spaced.}  Start all
-pages directly under the top margin. See the guidelines later
-regarding formatting the first page.  The manuscript should be
-printed single-sided and its length
-should not exceed the maximum page limit described in Section~\ref{sec:length}.
+\section{Previous work}
+At least two teams have tried to tackle this problem before us. The first approach,
+proposed by Sevil et. al., proposed additional tags by querying a set of similar
+images (using the original tags), and weighting the tags contained within them by the
+similarity of the image to the original image. The second team, from Microsoft research,
+used a randolm walk approach to suggest additional tags.
 
 \subsection{Electronically-available resources}
 
