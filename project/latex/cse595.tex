@@ -63,7 +63,56 @@ rank the expanded tags with the visual features to highgly score those tags whic
 the given image. We present multiple statistics about the suggested tags and also perform human
 evaluation to compute the human perceived goodness of the suggested tags.
 
-\section{General Instructions}
+\section{Experimental Evaluation}
+We performed experiments on flickr data set. Tags and images were separately downloaded using
+flickr apis. We downloaded about 500,000 images from flickr belonging to categories: cat,
+dog, train, aircraft, car, bus, places, crocodile, harley etc. We obtained 311,000 unique tags
+corresponding to these images. Like mentioned before we filtered tags which contained numbers
+and special characters. We found that such tags were not of much relevance to the images.
+
+Evaluation of the tags would require some quantitative way of analysing quality. We evaluate
+the tag quality automatically by two methods. Apart from these automatic methods, we also
+perform human evaluation to score the tag quality.
+
+\subsection{Original tag recall in top 5 suggested tags}
+In this evaluation, we compute the number of tags in the original image tags that we suggest
+in the top five tags automatically suggested by our method. The intuition behind this evaluation
+is to make sure that the best tags we suggest have a good coverage of the original tags. Although
+this method seems like a good measure of quality, the poor tags present in the original image
+will cause this measure to degrade. Our method will fail to suggest original tags if there is
+very less relevance with the given image. We calculate this measure of quality for tags generated
+with text only features, visual only features and visual + text features. Table () tabulates the
+experimental results.
+
+Put the data.
+
+From the table its clear that text features alone have better overlap with the given tags.
+This is because, the original tags will also be suggested as part of the text co-occurrence
+model. We see a decline in the scores with visual only attributes and text+visual attributes.
+We attribute this to the fact that for visual features, the ranking of tags comes purely from
+the gist or spatial pyramid features and hence the overlap with the original tags will be lesser.
+For text+visual features, the ranking of tags push better tags to the top, which has lower overlap
+with the original tags compared to text only features.
+
+\subsection{Prediction of original tags removed from test images}
+For this evaluation, we randomly remove 30 percent of the orignal tags from the test images. We
+then pass these images through our pipeline and compute the number of tags suggested from the 
+removed original tags in the top 20 of our suggested tags. The intuition behind this measure of
+quality is to understand how well our models are able to simulate the quality of tags possessed
+by original tags. This measure also has problems like mentioned before, but is a better measure
+of quality because we look for the existence of the removed original tags in the suggested tag
+set as a whole. We calculate this measure of quality for tags generated with text only features,
+visual only features and visual + text only features. Table () tabulates the experimental results.
+
+Put the data.
+
+Put the inference.
+
+\subsection{Evaluation of classifier One Vs Rest}
+For this experimental setup, we trained a classifier one for each unique tag appearing atleast
+10 times in a particular category. We experimented the one vs rest classifier with support vector
+machines to learn the visual features for individual tags. It turns out that the performance of
+this classifier is worse when compared with a single classifier with multi-class prediction.
 
 Manuscripts must be in two-column format.  Exceptions to the
 two-column format include the title, authors' names and complete
