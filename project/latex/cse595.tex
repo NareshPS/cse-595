@@ -222,13 +222,22 @@ text only features, visual only features and text+visual features. We also perfo
 evaluation of the original tags so that we could compare the scores of the original tags with
 the suggested tags. Table() tabulates the results of the human evaluation.
 
-Put the data.
+\begin{figure*}[h]
+\includegraphics[width=0.8\textwidth]{humanEvalGraph.png}
+\end{figure*}
+
 
 We also found that when the number of tags in the image were less and those ones were very relevant,
 the quality of tags expanded tended to be lesser. On the other hand when the original tags were bad,
 we were able to suggest better quality tags. We studied the score pattern of original tags with respect
-to the suggested tag. Figure() shows that when the original tag quality goes down, the suggested tag
-quality goes up and vice versa.
+to the suggested tag. Figure() shows scores from text-only, visual-only and text+visual features in
+comparison to increasing original tag scores. The graph shows that text+visual and text-only have
+higher quality than original tags. Visual-only features, by themselves, although produce lower quality
+tags than the original ones, we find that using them in conjunction with text features gives us better
+quality than original tags. We can find that text+visual features perform only marginally better than
+text only features. We attribute this to the fact that visual model has to learn many classes (tags).
+Though the class probabilities from visual classifier are weak representations, it helps in ranking
+the text based expanded tags.
 
 \section{Implementation}
 The image download was done on a hadoop cluster to reduce the amount of time
