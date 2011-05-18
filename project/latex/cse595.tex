@@ -66,7 +66,7 @@ evaluation to compute the human perceived goodness of the suggested tags.
 
 \section{Related Work}
 Tag expansion and ranking has been a popular research topic in last few years. With the explosion of
-images online on Flickr, Picasa, and Google Images etc., it became necessary to devise means to 
+images online on Flickr, Picasa, and Google Images etc., it became necessary to devise means to
 organize and manage images more effectively. Tags were introduced to solve this problem. Since,
 they are mainly added by the users, they tend to represent contextual information about the image.
 
@@ -246,7 +246,9 @@ Though the class probabilities from visual classifier are weak representations, 
 the text based expanded tags.
 
 \section{Implementation}
-The image download was done on a hadoop cluster to reduce the amount of time
+We used James Hays' matlab code to query and downlaod the metadata for images
+in eight categories. We used this metadata to extract the urls, and the actual
+image download was done on a hadoop cluster to reduce the amount of time
 required to download all the images.
 For each category, we performed a Google search to get canonical images for
 those vcategories. We found that for any given keyword, the results returned
@@ -259,9 +261,10 @@ features of the images. We filtered the tags such that any word containing
 numbers was not considered for training the data. We claculated tag
 cooccurence for every pair of tags in the training set, assuming independence
 between the pairs. The probability of a given tag  a tag `tag2' depends
-on the number of times they co occur with the prior tags. We build a bayes model to calculate the
-probability of seeing a tag given a set of prior tags. We also extend the list
-of tags using wordnet, where we choose synonyms to augment the original set.
+on the number of times they co occur with the prior tags. We build a bayes
+model to calculate the probability of seeing a tag given a set of prior tags.
+We also extend the list of tags using wordnet, where we choose synonyms to
+augment the original set.
 
 We used two visual features, gist vectors and spatial pyramid based on
 [someones] method. Gist was expected to help with global features such as
@@ -280,12 +283,13 @@ when submitting your paper for review.
 \begin{figure}[H]
 \includegraphics[width=0.5\textwidth]{examples/cat1.jpg}
 \end{figure}
-\framebox{
-Original: cats,baby,cat,person,toddler,sitting,meetup,candid,next,hershey,bpal,willcall,ecwc,nailpolishetc\\
-Text-only: cats,cat,meetup,hershey,bpal,ecwc,nailpolishetc,willcall,candid,dog,baby,kitty,black,blackness,inkiness,pet,sitting,kitten,cute,pool\\
-Visual-only: cat,cats,pet,cute,kitten,kitty,animal,pets,home,garden,animals,nature,canon,flowers,family,green,city,dog,flower,car\\
-Text+Visual: fauna,felid,dogs,girl,baby,black,white,people,street,house,feline,dog,animals,kitty,animal,kitten,cute,pet,cats,cat
-}
+
+\emph{\textbf{Original} cats, baby, cat, person, toddler, sitting, meetup, candid, next, hershey, bpal, willcall, ecwc, nailpolishetc\\
+\textbf{Text-only} cats, cat, meetup, hershey, bpal, ecwc, nailpolishetc, willcall, candid, dog, baby, kitty, black, blackness, inkiness, pet, sitting, kitten, cute, pool\\
+\textbf{Visual-only} cat, cats, pet, cute, kitten, kitty, animal, pets, home, garden, animals, nature, canon, flowers, family, green, city, dog, flower, car\\
+\textbf{Text+Visual} fauna, felid, dogs, girl, baby, black, white, people, street,
+house, feline, dog, animals, kitty, animal, kitten, cute, pet, cats, cat}
+
 \bibliographystyle{cse595}
 % you bib file should really go here
 \bibliography{bib}
