@@ -15,6 +15,7 @@
 \usepackage{url}
 \usepackage{latexsym}
 \usepackage{graphicx}
+\usepackage{float}
 
 %\setlength\titlebox{6.5cm}    % You can expand the title box if you
 % really have to
@@ -68,21 +69,35 @@ Tag expansion and ranking has been a popular research topic in last few years. W
 images online on Flickr, Picasa, and Google Images etc., it became necessary to devise means to 
 organize and manage images more effectively. Tags were introduced to solve this problem. Since,
 they are mainly added by the users, they tend to represent contextual information about the image.
-For instance, a cat in an image would be tagged by the name of the cat and also the tag \emph{cat}.
-\newcite{Liu:2009:TR:1526709.1526757} have introduced an approach to rank tags using initial relevance 
-scores based on probability density estimation. They tune these score based on a random walk model
-which models transition probabilities. This approach requires large training set to compute the 
-probability density function and the random walk model. \newcite{Sevil:2010:ATE:1825050.1825058} have 
-proposed a methodology for tag expansion which requires user to assign initial tags. Initial tags
-are used to target images using similarity of tags. A list of tags is constructed based on the similar images
-which are weighted according to the similarity with the target image. The highest rank tags are used to 
-expand the tags of target image. This approach uses both visual and textual similarities for expansion of tags.
-Their approach assign tags when the photo is uploaded. This method relies heavily on the visual similarity
-of images and thus, would mainly work for very similar images.. Our method aims to expand and rank tags simultaneously
-using tag co-occurence and visual features. In contrast to \newcite{Sevil:2010:ATE:1825050.1825058} approach, 
-our method uses co-occurence to find similar tags. We believe, tag co-occurence will help us to tag images with
-such related tags and thus, improve image search results. This approach is more robust than using visual cues to
-get similar images. In addition, the similarity of visual features can be used to find more related tags. 
+
+For instance, a cat in an image would be tagged by the name of the cat instead of the word \emph{cat}.
+Significant research efforts are devoted for automatic annotation of tags \newcite{Liu:2009:TR:1526709.1526757}.
+The tags that describe the content of images can help
+users easily manage and access large-scale image repositories.
+With these metadata, the manipulations of image data
+can be easier to be accomplished, such as browsing, indexing
+and retrieval. Extensive research efforts have been dedicated
+to automatically annotating images with a set of tags [6, 7,
+8, 9]. These methods usually require a labeled training set
+and then learn models with these data based on low-level features,
+and then new unlabeled images can thus be annotated
+using these models. Although a lot of encouraging results
+have been reported, the performance of these approaches
+are still far from satisfactory for practical large-scale application
+due to the semantic gap between tags and low-level
+features. Manual tagging that allows users to provide image
+tags by themselves is an alternative approach. It of courses
+adds users. labor costs in comparison with automatic tagging,
+but it will provide more accurate tags. Manual tagging
+has widely been adopted in image and video sharing websites
+such as Flickr and Youtube, and the popularity of these
+websites has demonstrated its rationality. However, as introduced
+in Section 1, the user provided tags are orderless
+and this significantly limits their applications. Asking users
+to manually order the tags is obviously infeasible since it
+will add much more labor costs for users. This difficulty
+motivates our work. To the best of our knowledge, this is
+the first work that aims to bring orders to image tags.
 
 \section{Experimental Evaluation}
 We performed experiments on flickr data set. Tags and images were separately downloaded using
@@ -109,7 +124,8 @@ experimental results.
 \begin{table*}
   \caption{Number of tags in the top 5 predicted tags, present in
   the original}
-    \begin{tabular}{|l|l|l|l|l|}
+  \begin{center}
+    \begin{tabular}{|l l l l l|}
 \hline
 Category & Text & Visual & Text + Visual & Total \\
 \hline
@@ -120,7 +136,8 @@ cat & 198 & 59 & 64 & 280 \\
 crocodile & 89 & 51 & 38 & 100 \\
 dog & 110 & 31 & 43 & 145 \\
 \hline
-    \end{tabular}
+\end{tabular}
+\end{center}
 \end{table*}
 
 From the table its clear that text features alone have better overlap with the given tags.
@@ -141,10 +158,10 @@ of quality because we look for the existence of the removed original tags in the
 set as a whole. We calculate this measure of quality for tags generated with text only features,
 visual only features and visual + text only features. Table () tabulates the experimental results.
 
-
 \begin{table*}
    \caption{Fraction of excluded tags succesfully predicted}
-    \begin{tabular}{|l|l|l|l|}
+\begin{center}
+    \begin{tabular}{|l l l l|}
 \hline
 Category & Text & Visual & Text + Visual \\
 \hline
@@ -155,27 +172,27 @@ cat &  0.32 & 0.95 & 0.27 \\
 crocodile &  0.36 & 1 & 0.34 \\
 dog  & 0.29 & 0.89 & 0.22 \\
 \hline
-    \end{tabular}
+\end{tabular}
+\end{center}
 \end{table*}
-
 
 % HUMAN EVALUATION
 \begin{table*}
   \caption{Human evaluation}
-    \begin{tabular}{|l|l|l|l|l|}
+\begin{center}
+    \begin{tabular}{|l l l l l|}
 \hline
 Category & Text & Visual & Text + Visual & Total \\
 \hline
-
 aircraft & 2.05 & 2.07 & 1.95 & 2.13 \\
 bus & 2.52 & 2.47 & 2.65 & 2.39 \\
 car & 2.26 & 1.80 & 2.41 & 2.43 \\
 dogs & 2.64 & 2.13 & 2.57 & 2.53 \\
 cats & 3.09 & 2.49 & 3.14 & 2.57 \\
 crocodile & 2.79 & 2.08 & 2.36 & 2.59 \\
-
 \hline
-    \end{tabular}
+\end{tabular}
+\end{center}
 \end{table*}
 
 \subsection{Evaluation of classifier One Vs Rest}
@@ -186,13 +203,13 @@ this classifier is worse when compared with a single classifier with multi-class
 
 %% THIS IS HERE FOR LAYOUR PURPOSES oNLY
 
-\begin{figure*}[h]
-\includegraphics[width=0.8\textwidth]{tagExpansion.png}
-\end{figure*}
+\begin{figure}[H]
+\includegraphics[width=0.5\textwidth]{tagExpansion.png}
+\end{figure}
 
-\begin{figure*}[h]
-\includegraphics[width=0.8\textwidth]{model.png}
-\end{figure*}
+\begin{figure}[H]
+\includegraphics[width=0.5\textwidth]{model.png}
+\end{figure}
 
 We downloaded [a lot of] Flickr images, pertaining to pre-selected categories.
 
@@ -209,8 +226,10 @@ text only features, visual only features and text+visual features. We also perfo
 evaluation of the original tags so that we could compare the scores of the original tags with
 the suggested tags. Table() tabulates the results of the human evaluation.
 
-\begin{figure*}[h]
+\begin{figure*}[t]
+\begin{center}
 \includegraphics[width=0.8\textwidth]{humanEvalGraph.png}
+\end{center}
 \end{figure*}
 
 
