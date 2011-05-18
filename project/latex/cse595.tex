@@ -65,15 +65,27 @@ the given image. We present multiple statistics about the suggested tags and als
 evaluation to compute the human perceived goodness of the suggested tags.
 
 \section{Related Work}
-Tag expansion and ranking has been a popular research topic in last few years. With the explosion of
-images online on Flickr, Picasa, and Google Images etc., it became necessary to devise means to
-organize and manage images more effectively. Tags were introduced to solve this problem. Since,
-they are mainly added by the users, they tend to represent contextual information about the image.
+Tag suggestion as a problem for text has been studied well and is also present
+in leading bookmarking sites such as del.icio.us and in certain blogging sites
+such as blogger. Techniques for generating personalized tag recommendations for 
+users of social book-marking sites such as del.icio.us are formulated by 
+\newcite{jaeschke2008tag} and works of \newcite{Byde2007}. Tag suggestion is
+an easier problem for text compared to tag suggestion for images. Tag expansion 
+and ranking has also been a popular research topic in last few years. With the 
+explosion of images online on Flickr, Picasa, and Google Images etc., it 
+became necessary to devise means to
+organize and manage images more effectively. Research in contexual analysis of
+images \newcite{Carneiro2005}, \newcite{LavrenkoNIPS03} has served as a 
+motivation to apply those techniques in conjunction with textual analysis of
+existing tags to suggest high quality relevant tags.
+The combined intelligence of visual notion of an image is expressed in the form
+of tags that are associated with images on such photo shraring. Such tags tend to represent contextual information about the image.
 For instance, a cat in an image would be tagged by the name of the cat and also the tag \emph{cat}.
-\newcite{Liu:2009:TR:1526709.1526757} have introduced an approach to rank tags using initial relevance 
+
+Our work is similar to the work of \newcite{Liu:2009:TR:1526709.1526757} who have introduced an approach to rank tags using initial relevance 
 scores based on probability density estimation. They tune these score based on a random walk model
 which models transition probabilities. This approach requires large training set to compute the 
-probability density function and the random walk model. \newcite{Sevil:2010:ATE:1825050.1825058} have 
+probability density function and the random walk model. \newcite{Sevil:2010:ATE:1825050.1825058} also have 
 proposed a methodology for tag expansion which requires user to assign initial tags. Initial tags
 are used to target images using similarity of tags. A list of tags is constructed based on the similar images
 which are weighted according to the similarity with the target image. The highest rank tags are used to 
