@@ -10,7 +10,7 @@
 %%e.agirre@ehu.es or Sergi.Balari@uab.es
 %% and that of ACL 08 by Joakim Nivre and Noah Smith
 
-\documentclass[11pt]{article}
+\documentclass[12pt]{article}
 \usepackage{cse595}
 \usepackage{url}
 \usepackage{latexsym}
@@ -84,7 +84,17 @@ very less relevance with the given image. We calculate this measure of quality f
 with text only features, visual only features and visual + text features. Table () tabulates the
 experimental results.
 
-Put the data.
+
+\begin{table}
+    \begin{tabular}{|l|l|l|l|}
+aircraft & 0.92 & 0.46 & 0.61 \\
+bus & 0.73 & 0.24 & 0.27 \\
+car & 0.43 & 0.26 & 0.23 \\
+cat & 0.71 & 0.21 & 0.23 \\
+crocodile & 0.89 & 0.51 & 0.38 \\
+dog & 0.76 & 0.21 & 0.30
+    \end{tabular}
+\end{table}
 
 From the table its clear that text features alone have better overlap with the given tags.
 This is because, the original tags will also be suggested as part of the text co-occurrence
@@ -96,7 +106,7 @@ with the original tags compared to text only features.
 
 \subsection{Prediction of original tags removed from test images}
 For this evaluation, we randomly remove 30 percent of the orignal tags from the test images. We
-then pass these images through our pipeline and compute the number of tags suggested from the 
+then pass these images through our pipeline and compute the number of tags suggested from the
 removed original tags in the top 20 of our suggested tags. The intuition behind this measure of
 quality is to understand how well our models are able to simulate the quality of tags possessed
 by original tags. This measure also has problems like mentioned before, but is a better measure
@@ -104,15 +114,36 @@ of quality because we look for the existence of the removed original tags in the
 set as a whole. We calculate this measure of quality for tags generated with text only features,
 visual only features and visual + text only features. Table () tabulates the experimental results.
 
-Put the data.
 
-Put the inference.
+\begin{table}
+    \begin{tabular}{|l|l|l|l|l|}
+Category & Text & Visual & Text + Visual \\
+aircraft & 0.87 & 1 & 0.70 \\
+bus  & 0.33 & 0.67 & 0.29 \\
+car &  0.34 & 0.87 & 0.27 \\
+cat &  0.32 & 0.95 & 0.27 \\
+crocodile &  0.36 & 1 & 0.34 \\
+dog  & 0.29 & 0.89 & 0.22
+    \end{tabular}
+\end{table}
 
 \subsection{Evaluation of classifier One Vs Rest}
 For this experimental setup, we trained a classifier one for each unique tag appearing atleast
 10 times in a particular category. We experimented the one vs rest classifier with support vector
 machines to learn the visual features for individual tags. It turns out that the performance of
 this classifier is worse when compared with a single classifier with multi-class prediction.
+
+%% THIS IS HERE FOR LAYOUR PURPOSES oNLY
+
+\begin{figure*}[h]
+\includegraphics[width=0.8\textwidth]{tagExpansion.png}
+\end{figure*}
+
+\begin{figure*}[h]
+\includegraphics[width=0.8\textwidth]{model.png}
+\end{figure*}
+
+We downloaded [a lot of] Flickr images, pertaining to pre-selected categories.
 
 \subsection{Human Evaluation}
 The above mentioned statistics would provide a notion of quality of the tags suggested. But
@@ -123,7 +154,7 @@ lowest on relevance scale and 4 being highest on relevance scale. During evaluat
 were about places and not obvious in the image as part of content were scored as 1. For meta images,
 (ie) images which are photos of the writings, visual features will be of very little use. But
 text features would prove to be good. Human evaluation was performed for tags expanded with
-text only features, visual only features and text+visual features. We also performed human 
+text only features, visual only features and text+visual features. We also performed human
 evaluation of the original tags so that we could compare the scores of the original tags with
 the suggested tags. Table() tabulates the results of the human evaluation.
 
@@ -135,288 +166,30 @@ we were able to suggest better quality tags. We studied the score pattern of ori
 to the suggested tag. Figure() shows that when the original tag quality goes down, the suggested tag
 quality goes up and vice versa.
 
-Manuscripts must be in two-column format.  Exceptions to the
-two-column format include the title, authors' names and complete
-addresses, which must be centered at the top of the first page, and
-any full-width figures or tables (see the guidelines in
-Subsection~\ref{ssec:first}). {\bf Type single-spaced.}  Start all
-pages directly under the top margin. See the guidelines later
-regarding formatting the first page.  The manuscript should be
-printed single-sided and its length
-should not exceed the maximum page limit described in Section~\ref{sec:length}.
-
-\subsection{Electronically-available resources}
-
-ACL-2010 provides this description in \LaTeX2e (acl2010.tex) and PDF
-format (acl2010.pdf), along with the \LaTeX2e style file used to
-format it (acl2010.sty) and an ACL bibliography style
-(acl.bst). These files are all available at
-\url{http://nlp.csie.ncnu.edu.tw/~shin/acl2010/publication/doc/stylefiles/}. A Microsoft Word
-template file (acl2010.dot) is also available at the same URL. We
-strongly recommend the use of these style files, which have been
-appropriately tailored for the ACL-2010 proceedings. If you have an
-option, we recommend that you use the \LaTeX2e version. \textbf{If you will be
-using the Microsoft Word template, we suggest that you anonymize your
-source file so that the pdf produced does not retain your identity.}
-This can be done by removing any personal information from your source
-document properties.
-
-
-
-\subsection{Format of Electronic Manuscript}
-\label{sect:pdf}
-
-For the production of the electronic manuscript you must use Adobe's
-Portable Document Format (PDF). This format can be generated from
-postscript files. On Linux/Unix systems, you can use {\tt ps2pdf} for
-this purpose. In Microsoft Windows, you can use Adobe's Distiller
-or GSview (File$<$Convert$<$pdfwrite); if you have \textit{cygwin}
-installed, you can use \textit{dvipdf} or \textit{ps2pdf}. Note that
-some word processing programs generate PDF which may not include all
-the necessary fonts (esp. tree diagrams, symbols). When you print or
-create the PDF file, there is usually an option in your printer setup
-to include none, all or just non-standard fonts.  Please make sure
-that you select the option of including ALL the fonts. {\em Before
-sending it, test your PDF by printing it from a computer different
-from the one where it was created.} Moreover, some word processors may
-generate very large postscript/PDF files, where each page is rendered
-as an image. Such images may reproduce poorly. In this case, try
-alternative ways to obtain the postscript and/or PDF. One way on some
-systems is to install a driver for a postscript printer, send your
-document to the printer specifying ``Output to a file'', then convert
-the file to PDF.
-
-It is of utmost importance to specify the A4 format (21 cm
-x 29.7 cm) when formatting the paper. When working with
-{\tt dvips}, for instance, one should specify {\tt -t a4}.
-
-Print-outs of the PDF file on A4 paper should be identical to the
-hardcopy version. If you cannot meet the above requirements about the
-production of your electronic submission, please contact the
-publication chairs above as soon as possible.
-
-
-\subsection{Layout}
-\label{ssec:layout}
-
-Format manuscripts two columns to a page, in the manner these
-instructions are formatted. The exact dimensions for a page on A4
-paper are:
-
-\begin{itemize}
-\item Left and right margins: 2.5 cm
-\item Top margin: 2.5 cm
-\item Bottom margin: 2.5 cm
-\item Column width: 7.7 cm
-\item Column height: 24.7
-\item Gap between columns: 0.6 cm
-\end{itemize}
-
-Papers should not be formatted for any other paper size.
-% Removed by KO  we are not accepting printed papers any more!!!
-%  Exceptionally,
-% authors for whom it is \emph{impossible} to print on A4 paper may use
-% \emph{US Letter} paper. In this case, they should keep the \emph{top}
-% and \emph{left} margins as given above, use the same column width,
-% height and gap, and modify the bottom and right margins as
-% necessary. Note that the text will no longer be centered.
-
-\subsection{Fonts}
-
-For reasons of uniformity, Adobe's {\bf Times Roman} font should be
-used. In \LaTeX2e{} this is accomplished by putting
-
-\begin{quote}
-\begin{verbatim}
-\usepackage{times}
-\usepackage{latexsym}
-\end{verbatim}
-\end{quote}
-in the preamble. If Times Roman is unavailable, use {\bf Computer
-  Modern Roman} (\LaTeX2e{}'s default).  Note that the latter is about
-  10\% less dense than Adobe's Times Roman font.
-
-
-\begin{table}[h]
-\begin{center}
-\begin{tabular}{|l|rl|}
-\hline \bf Type of Text & \bf Font Size & \bf Style \\ \hline
-paper title & 15 pt & bold \\
-author names & 12 pt & bold \\
-author affiliation & 12 pt & \\
-the word ``Abstract'' & 12 pt & bold \\
-section titles & 12 pt & bold \\
-document text & 11 pt  &\\
-captions & 11 pt & \\
-abstract text & 10 pt & \\
-bibliography & 10 pt & \\
-footnotes & 9 pt & \\
-\hline
-\end{tabular}
-\end{center}
-\caption{\label{font-table} Font guide. }
-\end{table}
-
-\subsection{The First Page}
-\label{ssec:first}
-
-Center the title, author's name(s) and affiliation(s) across both
-columns. Do not use footnotes for affiliations. Do not include the
-paper ID number assigned during the submission process. Use the
-two-column format only when you begin the abstract.
-
-{\bf Title}: Place the title centered at the top of the first page, in
-a 15-point bold font. (For a complete guide to font sizes and styles, see Table~\ref{font-table}.) Long titles should be typed on two lines without
-a blank line intervening. Approximately, put the title at 2.5 cm from
-the top of the page, followed by a blank line, then the author's
-names(s), and the affiliation on the following line. Do not use only
-initials for given names (middle initials are allowed). Do not format surnames
-in all capitals (e.g., use ``Schlangen'' not ``SCHLANGEN'').
-Do not format title and section headings in all capitals as well
-except for proper names (such as ``BLEU'') that are conventionally
-in all capitals.
-The affiliation should contain the author's complete address, and if
-possible, an electronic mail address. Leave about 2 cm between the
-affiliation and the body of the first page.
-The title, author names and addresses should be completely
-identical to those entered to the electronical paper submission
-website in order to maintain the consistency of author information
-among all publications of the conference.
-
-{\bf Abstract}: Type the abstract at the beginning of the first
-column. The width of the abstract text should be smaller than the
-width of the columns for the text in the body of the paper by about
-0.6 cm on each side. Center the word {\bf Abstract} in a 12 point bold
-font above the body of the abstract. The abstract should be a concise
-summary of the general thesis and conclusions of the paper. It should
-be no longer than 200 words.
-
-{\bf Text}: Begin typing the main body of the text immediately after
-the abstract, observing the two-column format as shown in
-the present document.
-
-{\bf Indent} when starting a new paragraph. Use 11 points for text and
-subsection headings, 12 points for section headings and 15 points for
-the title.
-
-\subsection{Sections}
-
-{\bf Headings}: Type and label section and subsection headings in the
-style shown on the present document.  Use numbered sections (Arabic
-numerals) in order to facilitate cross references. Number subsections
-with the section number and the subsection number separated by a dot,
-in Arabic numerals.
-
-{\bf Citations}: Citations within the text appear
-in parentheses as~\cite{Gusfield:97} or, if the author's name appears in
-the text itself, as Gusfield~\shortcite{Gusfield:97}.
-Append lowercase letters to the year in cases of ambiguity.
-Treat double authors by using both authors' last names (e.g.,
-\cite{Aho:72}, but use \emph{et al.} when more than two authors are
-involved.  (e.g. \cite{Chandra:81})
-Collapse multiple citations (e.g., \cite{Gusfield:97,Aho:72}.) Also
-refrain from using full citations as sentence constituents. We suggest
-that instead of
-\begin{quote}
-  ``\cite{Gusfield:97} showed that ...''
-\end{quote}
-you use
-\begin{quote}
-``Gusfield \shortcite{Gusfield:97}   showed that ...''
-\end{quote}
-
-If you are using the provided \LaTeX{} and Bib\TeX{} style files, you
-can use the command \verb|\newcite| to get ``author (year)'' citations.
-
-As reviewing will be double-blind, the submitted version of the papers should not include the
-authors' names and affiliations. Furthermore, self-references that
-reveal the author's identity, e.g.,
-\begin{quote}
-``We previously showed \cite{Gusfield:97} ...''
-\end{quote}
-should be avoided. Instead, use citations such as
-\begin{quote}
-``Gusfield \shortcite{Gusfield:97}
-previously showed ... ''
-\end{quote}
-
-Please do not  use anonymous
-citations and  do not include acknowledgements when submitting your papers. Papers that do not conform
-to these requirements may be rejected without review.
-
-\textbf{References}: Gather the full set of references together under
-the heading {\bf References}; place the section before any Appendices,
-unless they contain references. Arrange the references alphabetically
-by first author, rather than by order of occurrence in the text.
-Provide as complete a citation as possible, using a consistent format,
-such as the one for {\em Computational Linguistics\/} or the one in the
-{\em Publication Manual of the American
-Psychological Association\/}~\cite{APA:83}.  Use of full names for
-authors rather than initials is preferred.  A list of abbreviations
-for common computer science journals can be found in the ACM
-{\em Computing Reviews\/}~\cite{ACM:83}.
-
-The \LaTeX{} and Bib\TeX{} style files provided roughly fit the
-American Psychological Association format, allowing regular citations,
-short citations and multiple citations as described above.
-
-{\bf Appendices}: Appendices, if any, directly follow the text and the
-references (but see above).  Letter them in sequence and provide an
-informative title: {\bf Appendix A. Title of Appendix}.
-
-\textbf{Acknowledgement} section should go as a last section immediately
-before the references.  Do not number the acknowledgement section.
-
-\subsection{Footnotes}
-
-{\bf Footnotes}: Put footnotes at the bottom of the page and use 9
-points text. They may be numbered or referred to by asterisks or other
-symbols.\footnote{This is how a footnote should appear.} Footnotes
-should be separated from the text by a line.\footnote{Note the line
-separating the footnotes from the text.}
-
-\subsection{Graphics}
-
-{\bf Illustrations}: Place figures, tables, and photographs in the
-paper near where they are first discussed, rather than at the end, if
-possible.  Wide illustrations may run across both columns.  Color
-illustrations are discouraged, unless you have verified that
-they will be understandable when printed in black ink.
-
-{\bf Captions}: Provide a caption for every illustration; number each one
-sequentially in the form:  ``Figure 1. Caption of the Figure.'' ``Table 1.
-Caption of the Table.''  Type the captions of the figures and
-tables below the body, using 11 point text.
-
-\section{Translation of non-English Terms}
-
-It is also advised to supplement non-English characters and terms
-with appropriate transliterations and/or translations
-since not all readers understand all such characters and terms.
-Inline transliteration or translation can be represented in
-the order of: original-form transliteration ``translation''.
-
 \section{Implementation}
-\begin{figure*}
-\includegraphics[width=0.8\textwidth]{model.png}
-\end{figure*}
-
-We downloaded [a lot of] Flickr images, pertaining to pre-selected categories.
+The image download was done on a hadoop cluster to reduce the amount of time
+required to download all the images.
 For each category, we performed a Google search to get canonical images for
 those vcategories. We found that for any given keyword, the results returned
 by Google were consistently more represnetative of that category. We used the
 most similar Flickr images (based on Euclidean distance of the gist vectors)
 for training.
 
-\begin{figure*}
-\includegraphics[width=0.8\textwidth]{tagExpansion.png}
-\end{figure*}
-
 We trained two models, a tag model and a visual model trained on the visual
-features of the images. We used two visual features, gist vectors and spatial
-pyramid based on [someones] method. We build a bayes model for the tags using
-the co-occurence statistics from the tags of the training images. We evaluated
-multiple calssifiers on the visual features, including smo and bayesian net.
+features of the images. We filtered the tags such that any word containing
+numbers was not considered for training the data. We claculated tag
+cooccurence for every pair of tags in the training set, assuming independence
+between the pairs. The probability of a given tag  a tag `tag2' depends
+on the number of times they co occur with the prior tags. We build a bayes model to calculate the
+probability of seeing a tag given a set of prior tags. We also extend the list
+of tags using wordnet, where we choose synonyms to augment the original set.
+
+We used two visual features, gist vectors and spatial pyramid based on
+[someones] method. Gist was expected to help with global features such as
+color and environment, while SIFT could help detect objects. We trained multiple
+calssifiers on the visual features by using Weka's implementation of structure
+learning of Bayesian networks using various hill climbing (K2, B, etc) and
+general purpose (simulated annealing, tabu search) algorithms.
 
 
 \section*{Acknowledgments}
