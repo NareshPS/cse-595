@@ -69,35 +69,21 @@ Tag expansion and ranking has been a popular research topic in last few years. W
 images online on Flickr, Picasa, and Google Images etc., it became necessary to devise means to
 organize and manage images more effectively. Tags were introduced to solve this problem. Since,
 they are mainly added by the users, they tend to represent contextual information about the image.
-
-For instance, a cat in an image would be tagged by the name of the cat instead of the word \emph{cat}.
-Significant research efforts are devoted for automatic annotation of tags \newcite{Liu:2009:TR:1526709.1526757}.
-The tags that describe the content of images can help
-users easily manage and access large-scale image repositories.
-With these metadata, the manipulations of image data
-can be easier to be accomplished, such as browsing, indexing
-and retrieval. Extensive research efforts have been dedicated
-to automatically annotating images with a set of tags [6, 7,
-8, 9]. These methods usually require a labeled training set
-and then learn models with these data based on low-level features,
-and then new unlabeled images can thus be annotated
-using these models. Although a lot of encouraging results
-have been reported, the performance of these approaches
-are still far from satisfactory for practical large-scale application
-due to the semantic gap between tags and low-level
-features. Manual tagging that allows users to provide image
-tags by themselves is an alternative approach. It of courses
-adds users. labor costs in comparison with automatic tagging,
-but it will provide more accurate tags. Manual tagging
-has widely been adopted in image and video sharing websites
-such as Flickr and Youtube, and the popularity of these
-websites has demonstrated its rationality. However, as introduced
-in Section 1, the user provided tags are orderless
-and this significantly limits their applications. Asking users
-to manually order the tags is obviously infeasible since it
-will add much more labor costs for users. This difficulty
-motivates our work. To the best of our knowledge, this is
-the first work that aims to bring orders to image tags.
+For instance, a cat in an image would be tagged by the name of the cat and also the tag \emph{cat}.
+\newcite{Liu:2009:TR:1526709.1526757} have introduced an approach to rank tags using initial relevance 
+scores based on probability density estimation. They tune these score based on a random walk model
+which models transition probabilities. This approach requires large training set to compute the 
+probability density function and the random walk model. \newcite{Sevil:2010:ATE:1825050.1825058} have 
+proposed a methodology for tag expansion which requires user to assign initial tags. Initial tags
+are used to target images using similarity of tags. A list of tags is constructed based on the similar images
+which are weighted according to the similarity with the target image. The highest rank tags are used to 
+expand the tags of target image. This approach uses both visual and textual similarities for expansion of tags.
+Their approach assign tags when the photo is uploaded. This method relies heavily on the visual similarity
+of images and thus, would mainly work for very similar images.. Our method aims to expand and rank tags simultaneously
+using tag co-occurence and visual features. In contrast to \newcite{Sevil:2010:ATE:1825050.1825058} approach, 
+our method uses co-occurence to find similar tags. We believe, tag co-occurence will help us to tag images with
+such related tags and thus, improve image search results. This approach is more robust than using visual cues to
+get similar images. In addition, the similarity of visual features can be used to find more related tags.
 
 \section{Experimental Evaluation}
 We performed experiments on flickr data set. Tags and images were separately downloaded using
